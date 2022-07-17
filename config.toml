@@ -104,7 +104,7 @@ enableEmoji = true
   [[menu.header]]
     name = "About Me"
     title = "About Alex McCreight"
-    url = "/about-me/"
+    url = "/about/"
     weight = 1
   [[menu.header]]
     name = "Blog"
