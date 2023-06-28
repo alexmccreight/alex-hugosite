@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Project Portfolio on Alex McCreight</title>
+    <link>https://alexmccreight.netlify.app/project/</link>
+    <description>Recent content in My Project Portfolio on Alex McCreight</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 06 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://alexmccreight.netlify.app/project/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Exploring Washington D.C. Bikeshare Ridership Behavior</title>
+      <link>https://alexmccreight.netlify.app/project/2022-05-06-dcridership/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-05-06-dcridership/</guid>
+      <description>Abstract The increasing popularity of bike sharing solves the last-mile problem for the commuters in cities by deploying bike sharing stations at bus stops, metro stations, and libraries. Increasing gas prices, maintenance costs, and traffic jams are obstacles for commuters that travel by car. Bike sharing services are a cost-effective and eco-friendly alternative. This paper will discuss the influence and efficiency of the bike sharing system in DC by evaluating Capital Bikeshare stations&amp;rsquo; popularity with a longitudinal approach in 2021.</description>
+    </item>
+    
+    <item>
+      <title>Analyzing Boston Home Values</title>
+      <link>https://alexmccreight.netlify.app/project/2022-04-25-housingprices/</link>
+      <pubDate>Mon, 25 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-04-25-housingprices/</guid>
+      <description>Data Context We chose to use Boston housing data from the ‘mlbench’ library for our research project. The data set contains 506 cases and 14 variables. Each case represents a census tract of Boston from the 1970 census. The variables include per capita crime rate, nitric oxide concentration, the average number of rooms per place of residence, the pupil-teacher ratio by census tract, the median value of homes, and more.</description>
+    </item>
+    
+    <item>
+      <title>The Effects of Race, Age, and Income on Home Values: Using Spatial Analysis to Evaluate Ramsey County Homes</title>
+      <link>https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/</link>
+      <pubDate>Fri, 22 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/</guid>
+      <description>Data Context and Research Question Ramsey County is the most densely populated county in Minnesota. Historically, Minnesota has been welcoming to immigrants, but when the anti-blackness movement was rampant in the US, African-American residents of the Twin Cities were also subject to this discrimination.
+During the first few decades of the twentieth century, members of real estate groups in Hennepin and Ramsey County implemented covenants into many housing deeds. These covenants were just a few lines of text in a housing deed that said only people of the &amp;ldquo;Caucasian race&amp;rdquo; could rent, lease, or sell various properties throughout the counties (University of Minnesota, n.</description>
+    </item>
+    
+    <item>
+      <title>The Effects of Education on Processing Speed: A Longitudinal Analysis of the ACTIVE Study</title>
+      <link>https://alexmccreight.netlify.app/project/2022-03-27-activestudy/</link>
+      <pubDate>Sun, 27 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-03-27-activestudy/</guid>
+      <description>Introduction to the ACTIVE Study The decline in cognitive ability common among older adults is known to lead to a decline in the performance of everyday activities and functional independence. Although there is evidence that cognitive skill training can improve cognitive function in older adults, there was no research that indicated that cognitive training results in improvements that persist into later adulthood–this is where the ACTIVE study stepped in. Starting in 1996, the ACTIVE (Advanced Cognitive Training for Independent and Vital Elderly) trial sought to evaluate whether specific training exercises for cognitive skills such as memory, reasoning, and speed of processing could improve &amp;ldquo;real-world functional outcomes in later adulthood&amp;rdquo; (Tennstedt and Unverzagt 2013.</description>
+    </item>
+    
+    <item>
+      <title>What Makes a Movie Popular?</title>
+      <link>https://alexmccreight.netlify.app/project/2021-12-17-bayes/</link>
+      <pubDate>Fri, 17 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2021-12-17-bayes/</guid>
+      <description>Introduction Motivation and Research Question Movies are one of the most important cultural products with increasing demand (Lee and Chang, 2009). Beyond entertainment, movies also take the form of serious art with profound social and philosophical reflections. Demand for specific movies is often hard to predict despite overall increasing demand. To understand how the movie industry operates and the specific factors that impact consumer preference for movies, we decided to analyze the US box office dataset and study what factors are most related to box office performance from the industry&amp;rsquo;s perspective.</description>
+    </item>
+    
+  </channel>
+</rss>

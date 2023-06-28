@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head>
+  
+                           
+     
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.101.0" />
+<title>The Effects of Race, Age, and Income on Home Values: Using Spatial Analysis to Evaluate Ramsey County Homes | Alex McCreight</title>
+
+
+<meta property="twitter:site" content="@apmccreight">
+<meta property="twitter:creator" content="@apmccreight">
+
+
+
+
+
+
+
+  
+    
+  
+<meta name="description" content="Analyzing homes in Ramsey County census tracts using Conditional and Simultaneous Autoregressive models">
+
+
+<meta property="og:site_name" content="Alex McCreight">
+<meta property="og:title" content="The Effects of Race, Age, and Income on Home Values: Using Spatial Analysis to Evaluate Ramsey County Homes | Alex McCreight">
+<meta property="og:description" content="Analyzing homes in Ramsey County census tracts using Conditional and Simultaneous Autoregressive models" />
+<meta property="og:type" content="page" />
+<meta property="og:url" content="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/" />
+<meta property="og:locale" content="en">
+
+
+
+
+    
+        <meta property="og:image" content="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/featured.png" >
+        <meta property="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/featured.png" >
+    
+    
+  <meta itemprop="name" content="The Effects of Race, Age, and Income on Home Values: Using Spatial Analysis to Evaluate Ramsey County Homes">
+<meta itemprop="description" content="Data Context and Research Question Ramsey County is the most densely populated county in Minnesota. Historically, Minnesota has been welcoming to immigrants, but when the anti-blackness movement was rampant in the US, African-American residents of the Twin Cities were also subject to this discrimination.
+During the first few decades of the twentieth century, members of real estate groups in Hennepin and Ramsey County implemented covenants into many housing deeds. These covenants were just a few lines of text in a housing deed that said only people of the &ldquo;Caucasian race&rdquo; could rent, lease, or sell various properties throughout the counties (University of Minnesota, n."><meta itemprop="datePublished" content="2022-04-22T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-04-22T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1488"><meta itemprop="image" content="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/featured.png">
+<meta itemprop="keywords" content="" />
+  
+  
+  <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  
+  
+  <link rel="stylesheet" href="/style.main.min.508aa34bb4fa7ebfddd6892a4ec251e1ce46ad0e0c5be6380abc84336f01b14e.css" integrity="sha256-UIqjS7T6fr/d1okqTsJR4c5GrQ4MW&#43;Y4CryEM28BsU4=" media="screen">
+  
+  
+  <script src="/panelset.min.dca42702d7daf6fd31dc352efd2bcf0e4ac8c05ccaa58d9293f6177462de5d5f.js" type="text/javascript"></script>
+  
+  
+  <script src="/main.min.839ccae8d97e12ee64a752d610eca52cfd7cf0dc4fb9fee7d2a5c7a73d3a36ef.js" type="text/javascript"></script>
+</head>
+<body>
+      <div class="grid-container">
+<header class="site-header pt4 pb2 mb4 bb b--transparent ph5 headroom z-max" role="banner">
+  <nav class="site-nav db dt-l w-100" role="navigation">
+    <a class="site-brand db dtc-l v-mid link no-underline w-100 w-33-l tc tl-l" href="https://alexmccreight.netlify.app" title="Home">
+      <img src="/img/blogophonic-mark-dark.png" class="dib db-l h2 w-auto" alt="Alex McCreight">
+    </a>
+    <div class="site-links db dtc-l v-mid w-100 w-47-l tc tr-l mt3 mt0-l ttu tracked">
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/about/" title="About Alex McCreight">About Me</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/blog/" title="Research">Research</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 active" href="/project/" title="Project Portfolio">Projects</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/talk/" title="Talks">Talks</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/collection/" title="A collection">A collection</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/elements/" title="Element Page">Elements</a>
+      
+      
+    </div>
+  </nav>
+</header>
+
+<main class="page-main pa4" role="main">
+  <section class="page-content mw7 center">
+    <article class="post-content pa0 ph4-l">
+      <header class="post-header">
+        <h1 class="f1 lh-solid measure-narrow mb3 fw4">The Effects of Race, Age, and Income on Home Values: Using Spatial Analysis to Evaluate Ramsey County Homes</h1>
+        
+        <p class="f6 measure lh-copy mv1">By Alex McCreight, Yiyang Shi</p>
+        <p class="f7 db mv0 ttu">April 22, 2022</p>
+
+      
+
+      </header>
+      <section class="post-body pt5 pb4">
+        
+
+
+
+<h2 id="data-context-and-research-question">Data Context and Research Question
+  <a href="#data-context-and-research-question"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>Ramsey County is the most densely populated county in Minnesota. Historically, Minnesota has been welcoming to immigrants, but when the anti-blackness movement was rampant in the US, African-American residents of the Twin Cities were also subject to this discrimination.</p>
+<p>During the first few decades of the twentieth century, members of real estate groups in Hennepin and Ramsey County implemented covenants into many housing deeds. These covenants were just a few lines of text in a housing deed that said only people of the &ldquo;Caucasian race&rdquo; could rent, lease, or sell various properties throughout the counties (University of Minnesota, n.d.). This went on for many years until the Supreme Court made covenants unenforceable in the late 1940s. However, many real estate companies and property holders ignored this ruling. It was not until 1953 that the Minnesota legislature prohibited them and Congress banned all racial restrictions on housing in 1968 as a part of the Fair Housing Act.</p>
+<p>Additionally, the practice of redlining, which involves in marking black neighborhoods as unsafe, effectively bars people of color from receiving quality infrastructure, education, and further restricts them from moving up the social ladder. Moreover, the construction of the Interstate-94 results in the entire Rondo neighborhood, which mostly consists of black residents, being tore down to make way for the highway, causing many to be displaced (Volante 2015.) Despite the fact that these practices happened decades ago, they still had, and are having everlasting impact. Today, while Saint Paul welcomes immigrants from Somalia, Laos, Vietnam, and many other countries and cultures, the city remains highly divided in terms of quality of life, which was carried from the historical legacy.</p>
+<p>So, we want to know how these discriminatory policies affect today&rsquo;s real estate market in Ramsey County? For this research project, we are going to examine the effects of these practices on today&rsquo;s home values in Ramsey County and see if demographic factors such as race, age, and job sectors can be indicators of Ramsey County&rsquo;s home values.</p>
+<img src="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<p>The following visualization shows us how median home values differ between census tracts in Ramsey County. We can see that North Oaks and some neighborhoods in downtown St. Paul (southwest side of the map) have the highest median home values, whereas tracts in central St. Paul tend to have the lowest median home values.</p>
+
+
+
+
+<h2 id="neighborhood-structure">Neighborhood Structure
+  <a href="#neighborhood-structure"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>We chose a rook neighborhood structure as it connects each census tract&rsquo;s neighbors based on their edges. Doing this will eliminate potential spatial correlation that appears in downtown Saint Paul. If we were to use any distance-based neighborhood structure, there is more likely to be spatial correlation as the census tracts are very condensed in the downtown area. While rook and queen neighborhood structures are similar, we chose not to use a queen as we did not want two tracts to be neighbors if only one point along the borders is touching.</p>
+
+
+
+
+<h2 id="mean-models">Mean Models
+  <a href="#mean-models"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<img src="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>Wb <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">nb2listw</span>(Rook, style <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;W&#34;</span>)
+</span></span><span style="display:flex;"><span>spdep<span style="color:#000;font-weight:bold">::</span><span style="color:#900;font-weight:bold">moran.test</span>(ramsey_data<span style="color:#000;font-weight:bold">$</span>gam_resid, Wb, alternative <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;two.sided&#34;</span>, randomisation <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">TRUE</span>) 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Find outliers</span>
+</span></span><span style="display:flex;"><span>ramsey_data <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#900;font-weight:bold">filter</span>(<span style="color:#900;font-weight:bold">abs</span>(<span style="color:#900;font-weight:bold">scale</span>(gam_resid)) <span style="color:#000;font-weight:bold">&gt;</span> <span style="color:#099">3</span>)
+</span></span></code></pre></div><p>We created two mean models, one utilizing linear regression and the other using splines. We originally chose a linear regression model for median home value as there is a positive linear relationship between median home value and median household income. However, the relationship is not globally linear, so to account for the nonlinearity, we implemented basis splines for <code>BirthPlace_Foreign born:</code>, <code>AgeE</code>, and <code>Industry_Finan</code>.</p>
+<p>Our visualization shows us that the generalized additive model has a lower BIC score of 3338 and a lower RMSE value of 46431. The linear model does not produce as desirable results as it has a BIC score of 3358 and an RMSE value of 54840.31. Additionally, the generalized additive model better predicts median home values for some census tracts, especially North Oaks. However, the model still overestimates the median home values of census tracts 357 and 358 (downtown St. Paul). After running a Moran&rsquo;s I test, we found that our model has a p-value of 1.25e-06, so we reject our null hypothesis that there is no spatial correlation. This tells us that we still have some spatial correlation present negatively affecting our model, and we must fit a new model to account for this.</p>
+
+
+
+
+<h2 id="fitting-spatial-autoregressive-models">Fitting Spatial Autoregressive Models
+  <a href="#fitting-spatial-autoregressive-models"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Fit SAR Model</span>
+</span></span><span style="display:flex;"><span>mod_sar <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">spautolm</span>(formula <span style="color:#000;font-weight:bold">=</span> HouseValueE <span style="color:#000;font-weight:bold">~</span> IncomeE <span style="color:#000;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#900;font-weight:bold">bs</span>(`BirthPlace_Foreign born:`, knots <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0.25</span>, degree <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>) <span style="color:#000;font-weight:bold">+</span> 
+</span></span><span style="display:flex;"><span>               <span style="color:#900;font-weight:bold">bs</span>(AgeE, knots <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">37</span>) <span style="color:#000;font-weight:bold">+</span> 
+</span></span><span style="display:flex;"><span>               <span style="color:#900;font-weight:bold">bs</span>(Industry_Finan, knots <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0.06</span>, degree <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>), 
+</span></span><span style="display:flex;"><span>               data <span style="color:#000;font-weight:bold">=</span> ramsey_data, listw <span style="color:#000;font-weight:bold">=</span> Wb, family <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;SAR&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ramsey_data<span style="color:#000;font-weight:bold">$</span>sar_resid <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">resid</span>(mod_sar)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Fit CAR Model</span>
+</span></span><span style="display:flex;"><span>mod_car <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">spautolm</span>(formula <span style="color:#000;font-weight:bold">=</span> HouseValueE <span style="color:#000;font-weight:bold">~</span> IncomeE <span style="color:#000;font-weight:bold">+</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#900;font-weight:bold">bs</span>(`BirthPlace_Foreign born:`, knots <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0.25</span>, degree <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>) <span style="color:#000;font-weight:bold">+</span> 
+</span></span><span style="display:flex;"><span>               <span style="color:#900;font-weight:bold">bs</span>(AgeE, knots <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">37</span>) <span style="color:#000;font-weight:bold">+</span> 
+</span></span><span style="display:flex;"><span>               <span style="color:#900;font-weight:bold">bs</span>(Industry_Finan, knots <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0.06</span>, degree <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">1</span>), 
+</span></span><span style="display:flex;"><span>               data <span style="color:#000;font-weight:bold">=</span> ramsey_data, listw <span style="color:#000;font-weight:bold">=</span> Wb, family <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;CAR&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ramsey_data<span style="color:#000;font-weight:bold">$</span>car_resid <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">resid</span>(mod_car)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># SAR Eval Metrics</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#BIC(mod_sar)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#sqrt(mean(ramsey_data$sar_resid^2))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># CAR Eval Metrics</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#BIC(mod_car)</span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#sqrt(mean(ramsey_data$car_resid^2))</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># SAR Moran&#39;s I Test</span>
+</span></span><span style="display:flex;"><span>spdep<span style="color:#000;font-weight:bold">::</span><span style="color:#900;font-weight:bold">moran.test</span>(ramsey_data<span style="color:#000;font-weight:bold">$</span>sar_resid, Wb, alternative <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;two.sided&#34;</span>, randomisation <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">TRUE</span>)  <span style="color:#998;font-style:italic"># Using randomization test</span>
+</span></span></code></pre></div><pre tabindex="0"><code>## 
+## 	Moran I test under randomisation
+## 
+## data:  ramsey_data$sar_resid  
+## weights: Wb    
+## 
+## Moran I statistic standard deviate = 0.13356, p-value = 0.8937
+## alternative hypothesis: two.sided
+## sample estimates:
+## Moran I statistic       Expectation          Variance 
+##     -0.0001685757     -0.0074626866      0.0029824444
+</code></pre><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># CAR Moran&#39;s I Test</span>
+</span></span><span style="display:flex;"><span>spdep<span style="color:#000;font-weight:bold">::</span><span style="color:#900;font-weight:bold">moran.test</span>(ramsey_data<span style="color:#000;font-weight:bold">$</span>car_resid, Wb, alternative <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;two.sided&#34;</span>, randomisation <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">TRUE</span>)  <span style="color:#998;font-style:italic"># Using randomization test</span>
+</span></span></code></pre></div><pre tabindex="0"><code>## 
+## 	Moran I test under randomisation
+## 
+## data:  ramsey_data$car_resid  
+## weights: Wb    
+## 
+## Moran I statistic standard deviate = -0.69209, p-value = 0.4889
+## alternative hypothesis: two.sided
+## sample estimates:
+## Moran I statistic       Expectation          Variance 
+##      -0.045448776      -0.007462687       0.003012454
+</code></pre><p>After comparing the outputs of SAR and CAR models, we decided to use SAR. The SAR model not only has lower BIC and RMSE values, but it also has a higher p-value in the Moran&rsquo;s I test, meaning that we are more confident that the leftover residuals are independent noise/errors. In other words, the SAR model does a better job than the CAR model eliminating the lingering spatial correlation left over from the GAM.</p>
+
+
+
+
+<h2 id="final-model">Final Model
+  <a href="#final-model"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+
+
+
+
+<h3 id="residuals-map">Residuals Map
+  <a href="#residuals-map"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h3>
+<p>Apparently, GAM fitted SAR reduced the RMSE in a great magnitude. We could also tell the slight changes on the residual map, where the color of SAR residual map is less tinted compared with GAM residual map. It&rsquo;s a positive signal that the SAR model helped GAM to account more deviations which could caused by the spatial correlation. In other words, the SAR model considered the neighborhood information that could cause the difference/similarity of the house value within a neighborhood.</p>
+
+
+
+
+<h3 id="coefficient-interpretations">Coefficient Interpretations
+  <a href="#coefficient-interpretations"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h3>
+<img src="https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/index_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+<p>In our model, we assumed <code>IncomeE</code> to have simple linear relationship with <code>HouseValueE</code>, so it only had one slope coefficient which is 2.0810, meaning for each one dollar increase in the census tract&rsquo;s median income, the estimated median home value will increase by 2.0810 dollars.</p>
+<p>For the variable <code>BirthPlace_Foreign born:</code>, <code>Industry_Finan</code>, and <code>AgeE</code> we used basis spline, so the estimate outputs were hard to interpret, but we could tell a general trend for each variable, especially where its slope changed. For <code>BirthPlace_Foreign born:</code>, we have the knot at 0.25, meaning we expect a drastic change for the slope before and after that knot. From the graph of <code>BirthPlace_Foreign born:</code> vs. <code>HouseValueE</code>, the <code>HouseValueE</code> decreased as the portion of foreign born residents increased, and the decrease of <code>HouseValueE</code> slowed down after the portion of foreign born residents reached 0.25. The relationship between <code>HouseValueE</code> and <code>Industry_Finan</code> shared similar characteristics with <code>HouseValueE</code> vs. <code>BirthPlace_Foreign born:</code>.</p>
+<p>For <code>AgeE</code> vs. <code>HouseValueE</code>, the trend of the data has a cubic characteristic, which also being considered within our model of basis spline. From <code>AgeE</code>=27 to <code>AgeE</code> = 37, there&rsquo;s an increasing trend of <code>HouseValueE</code>. The trend became flat in the range of <code>AgeE</code>=37 to <code>AgeE</code> = 45. And the <code>HouseValueE</code> returned increasing after <code>AgeE</code>=45.</p>
+
+
+
+
+<h2 id="conclusion">Conclusion
+  <a href="#conclusion"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<pre tabindex="0"><code>##         RMSE      BIC
+## OLS 54840.31 3358.834
+## GAM 46431.07 3338.417
+## SAR 37401.60 3305.445
+## CAR 41705.69 3331.848
+</code></pre><p>Many of the Ramsey County census tracts in downtown St. Paul are highly condensed. We wanted to make sure that even if two census tracts are not direct neighbors, there is still some spatial correlation between the two tracts if they share one or more of the same neighbors. CAR models utilize a spatial modification to the first-order Markov property, meaning that a census tract is only directly influenced by its neighbors (Goodchild and Haining 2004.) SAR models do not follow this property, which is why a SAR model makes more sense in the context of our data. Additionally, our SAR model produces both the lowest RMSE value and BIC score, making it the best model.</p>
+
+
+
+
+<h2 id="references">References
+  <a href="#references"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>Goodchild, Michael F, and Robert P Haining. 2004. “GIS and Spatial Data Analysis: Converging Perspectives.” Papers in Regional Science 83 (1): 363–85.</p>
+<p>University of Minnesota, Regents of the. n.d. “What Are Covenants?” 
+<a href="https://mappingprejudice.umn.edu/what-are-covenants/index.html" target="_blank" rel="noopener">https://mappingprejudice.umn.edu/what-are-covenants/index.html</a>.</p>
+<p>Volante, Alisha J. 2015. “The Rondo Neighborhood &amp; African American History in St. Paul, MN: 1900s to Current.”</p>
+
+        
+        <details closed class="f6 fw7 input-reset">
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Posted on:</dt>
+    <dd class="fw5 ml0">April 22, 2022</dd>
+  </dl>
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Length:</dt>
+    <dd class="fw5 ml0">7 minute read, 1488 words</dd>
+  </dl>
+  
+  
+  
+  <dl class="f6 lh-copy">
+    <dt class="fw7">See Also:</dt>
+    
+  </dl>
+</details>
+
+      </section>
+      <footer class="post-footer">
+        <div class="post-pagination dt w-100 mt4 mb2">
+  
+  
+    <a class="prev dtc pr2 tl v-top fw6"
+    href="https://alexmccreight.netlify.app/project/2022-04-25-housingprices/">&larr; Analyzing Boston Home Values</a>
+  
+  
+  
+    <a class="next dtc pl2 tr v-top fw6"
+    href="https://alexmccreight.netlify.app/project/2022-03-27-activestudy/">The Effects of Education on Processing Speed: A Longitudinal Analysis of the ACTIVE Study &rarr;</a>
+  
+</div>
+
+      </footer>
+    </article>
+    
+      
+<div class="post-comments pa0 pa4-l mt4">
+  
+  <script src="https://utteranc.es/client.js"
+          repo="alexmccreight/alex-hugosite"
+          issue-term="pathname"
+          theme="boxy-light"
+          label="comments :crystal_ball:"
+          crossorigin="anonymous"
+          async
+          type="text/javascript">
+  </script>
+  
+</div>
+
+    
+  </section>
+</main>
+<footer class="site-footer pv4 bt b--transparent ph5" role="contentinfo">
+  <nav class="db dt-l w-100">
+    <p class="site-copyright f7 db dtc-l v-mid w-100 w-33-l tc tl-l pv2 pv0-l mv0 lh-copy">
+      &copy; 2022 Alex McCreight
+      <span class="middot-divider"></span>
+      Made with <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/hugo-apero/" rel="dct:source">Hugo Apéro</a></span>.
+      <br />
+      
+Based on <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/formspree/blogophonic-hugo" rel="dct:source">Blogophonic</a></span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://formspree.io" property="cc:attributionName" rel="cc:attributionURL">Formspree</a>.
+    </p>
+    
+    <div class="site-social-links db dtc-l v-mid w-100 w-33-l tc pv2 pv0-l mv0">
+      <div class="social-icon-links" aria-hidden="true">
+  
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://github.com/alexmccreight" title="github" target="_blank" rel="noopener">
+      <i class="fab fa-github fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://twitter.com/apmccreight" title="twitter" target="_blank" rel="noopener">
+      <i class="fab fa-twitter fa-lg fa-fw"></i>
+    </a>
+  
+</div>
+
+    </div>
+    
+    <div class="site-links f6 db dtc-l v-mid w-100 w-67-l tc tr-l pv2 pv0-l mv0">
+      
+      <a class="dib pv1 ph2 link" href="/contact/" title="Contact form">Contact</a>
+      
+    </div>
+  </nav>
+  
+    <script>
+
+    var i, text, code, codes = document.getElementsByTagName('code');
+    for (let i = 0; i < codes.length;) {
+      code = codes[i];
+      if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+        text = code.textContent;
+        if (/^\$[^$]/.test(text) && /[^$]\$$/.test(text)) {
+          text = text.replace(/^\$/, '\\(').replace(/\$$/, '\\)');
+          code.textContent = text;
+        }
+        if (/^\\\((.|\s)+\\\)$/.test(text) ||
+            /^\\\[(.|\s)+\\\]$/.test(text) ||
+            /^\$(.|\s)+\$$/.test(text) ||
+            /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+          code.outerHTML = code.innerHTML;  
+          continue;
+        }
+      }
+      i++;
+    }
+</script>
+
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css" integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js" integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+    
+  
+  
+</footer>
+
+      </div>
+    </body>
+</html>

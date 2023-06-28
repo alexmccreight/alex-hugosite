@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Research Experiences on Alex McCreight</title>
+    <link>https://alexmccreight.netlify.app/blog/</link>
+    <description>Recent content in My Research Experiences on Alex McCreight</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 19 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://alexmccreight.netlify.app/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>What casues Chronic Kidney Disease of Unknown Etiology?</title>
+      <link>https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/</link>
+      <pubDate>Tue, 19 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/</guid>
+      <description>Introduction This summer, I worked with Dr. Brianna Heggeseth and fellow Macalester student, Connie Zhang, researching Chronic Kidney Disease of Uncertain Etiology (CKDu) in Nicaragua. This work is in collaboration with Dr. Ben Caplin from the Department of Renal Medicine, University College London, London, UK and Dr. Marvin Gonzalez-Quiroz from the Research Centre on Health, Work and Environment, National Autonomous University of Nicaragua, León (UNAN-Leon), León, Nicaragua.
+Chronic Kidney Disease of Uncertain Etiology Chronic Kidney Disease (CKD) most commonly affects people ages 65 and older, which make up 38% of cases (&amp;ldquo;Chronic Kidney Disease in the United States&amp;rdquo; 2021.</description>
+    </item>
+    
+    <item>
+      <title>Built-in Contact Form</title>
+      <link>https://alexmccreight.netlify.app/blog/built-in-contact-form/</link>
+      <pubDate>Mon, 01 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/blog/built-in-contact-form/</guid>
+      <description>Formspree makes it easy to receive submissions from HTML forms on your static website. Functional Form This theme has a form-to-email feature built in, thanks to the simple Formspree integration. All you need to activate the form is a valid recipient email address saved in the front matter of the form (/content/forms/contact.md). Of course, the example shown below (your@email.here) must not be used. Please use your actual email address.</description>
+    </item>
+    
+  </channel>
+</rss>

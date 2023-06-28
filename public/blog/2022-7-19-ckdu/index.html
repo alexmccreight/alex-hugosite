@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head>
+  
+                           
+     
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.101.0" />
+<title>What casues Chronic Kidney Disease of Unknown Etiology? | Alex McCreight</title>
+
+
+<meta property="twitter:site" content="@apmccreight">
+<meta property="twitter:creator" content="@apmccreight">
+
+
+
+
+
+
+
+  
+    
+  
+<meta name="description" content="Using Growth Mixture Models and Hidden Markov Models to differentiate the etiology and pathogenesis of CKDu">
+
+
+<meta property="og:site_name" content="Alex McCreight">
+<meta property="og:title" content="What casues Chronic Kidney Disease of Unknown Etiology? | Alex McCreight">
+<meta property="og:description" content="Using Growth Mixture Models and Hidden Markov Models to differentiate the etiology and pathogenesis of CKDu" />
+<meta property="og:type" content="page" />
+<meta property="og:url" content="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/" />
+<meta property="og:locale" content="en">
+
+
+
+
+    
+        <meta property="og:image" content="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/featured.png" >
+        <meta property="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/featured.png" >
+    
+    
+  <meta itemprop="name" content="What casues Chronic Kidney Disease of Unknown Etiology?">
+<meta itemprop="description" content="Introduction This summer, I worked with Dr. Brianna Heggeseth and fellow Macalester student, Connie Zhang, researching Chronic Kidney Disease of Uncertain Etiology (CKDu) in Nicaragua. This work is in collaboration with Dr. Ben Caplin from the Department of Renal Medicine, University College London, London, UK and Dr. Marvin Gonzalez-Quiroz from the Research Centre on Health, Work and Environment, National Autonomous University of Nicaragua, León (UNAN-Leon), León, Nicaragua.
+Chronic Kidney Disease of Uncertain Etiology Chronic Kidney Disease (CKD) most commonly affects people ages 65 and older, which make up 38% of cases (&ldquo;Chronic Kidney Disease in the United States&rdquo; 2021."><meta itemprop="datePublished" content="2022-07-19T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-07-19T00:00:00+00:00" />
+<meta itemprop="wordCount" content="2185"><meta itemprop="image" content="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/featured.png">
+<meta itemprop="keywords" content="" />
+  
+  
+  <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  
+  
+  <link rel="stylesheet" href="/style.main.min.508aa34bb4fa7ebfddd6892a4ec251e1ce46ad0e0c5be6380abc84336f01b14e.css" integrity="sha256-UIqjS7T6fr/d1okqTsJR4c5GrQ4MW&#43;Y4CryEM28BsU4=" media="screen">
+  
+  
+  <script src="/panelset.min.dca42702d7daf6fd31dc352efd2bcf0e4ac8c05ccaa58d9293f6177462de5d5f.js" type="text/javascript"></script>
+  
+  
+  <script src="/main.min.839ccae8d97e12ee64a752d610eca52cfd7cf0dc4fb9fee7d2a5c7a73d3a36ef.js" type="text/javascript"></script>
+</head>
+<body>
+      <div class="grid-container">
+<header class="site-header pt4 pb2 mb4 bb b--transparent ph5 headroom z-max" role="banner">
+  <nav class="site-nav db dt-l w-100" role="navigation">
+    <a class="site-brand db dtc-l v-mid link no-underline w-100 w-33-l tc tl-l" href="https://alexmccreight.netlify.app" title="Home">
+      <img src="/img/blogophonic-mark-dark.png" class="dib db-l h2 w-auto" alt="Alex McCreight">
+    </a>
+    <div class="site-links db dtc-l v-mid w-100 w-47-l tc tr-l mt3 mt0-l ttu tracked">
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/about/" title="About Alex McCreight">About Me</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 active" href="/blog/" title="Research">Research</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/project/" title="Project Portfolio">Projects</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/talk/" title="Talks">Talks</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/collection/" title="A collection">A collection</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/elements/" title="Element Page">Elements</a>
+      
+      
+    </div>
+  </nav>
+</header>
+
+<main class="page-main pa4" role="main">
+  <section class="page-content mw7 center">
+    <article class="post-content pa0 ph4-l">
+      <header class="post-header">
+        <h1 class="f1 lh-solid measure-narrow mb3 fw4">What casues Chronic Kidney Disease of Unknown Etiology?</h1>
+        
+        <p class="f6 measure lh-copy mv1">By Alex McCreight</p>
+        <p class="f7 db mv0 ttu">July 19, 2022</p>
+
+      
+
+      </header>
+      <section class="post-body pt5 pb4">
+        
+
+
+
+<h1 id="introduction">Introduction
+  <a href="#introduction"></a>
+</h1>
+<p>This summer, I worked with Dr. Brianna Heggeseth and fellow Macalester student, Connie Zhang, researching Chronic Kidney Disease of Uncertain Etiology (CKDu) in Nicaragua. This work is in collaboration with Dr. Ben Caplin from the Department of Renal Medicine, University College London, London, UK and Dr. Marvin Gonzalez-Quiroz from the Research Centre on Health, Work and Environment, National Autonomous University of Nicaragua, León (UNAN-Leon), León, Nicaragua.</p>
+
+
+
+
+<h1 id="chronic-kidney-disease-of-uncertain-etiology">Chronic Kidney Disease of Uncertain Etiology
+  <a href="#chronic-kidney-disease-of-uncertain-etiology"></a>
+</h1>
+<p>Chronic Kidney Disease (CKD) most commonly affects people ages 65 and older, which make up 38% of cases (&ldquo;Chronic Kidney Disease in the United States&rdquo; 2021.) However, young adults, ages 18-30, living in agricultural communities in Nicaragua experience Chronic Kidney Disease of Uncertain Etiology (CKDu) or Mesoamerican Nephropathy (MeN) at a significantly higher rate than the global average. We can measure kidney function using the estimated glomerular filtration rate (eGFR.) Typically, a healthy person has an eGFR level greater than 90. Someone with an eGFR measurement between 61 and 89 could still be considered healthy as long as they have relatively stable eGFR measurements across multiple check-ins (occurring every 6 to 12 months.) Once one drops below 60 eGFR at two consecutive check-ins, they will be formally diagnosed with CKD.</p>
+<p>When investigating CKDu in agricultural communities, nephrologists are most interested in the etiology of CKDu rather than its pathogenesis. More specifically, they hope to find what causes the disease rather than what makes it worse after someone already has it. Previous studies have explored CKDu in Nicaragua but have only found the exposures that exacerbate the disease, such as outdoor agricultural work, lack of shade available during work breaks (Gonzalez-Quiroz et al. 2018,) cramps, and unintentional weight loss (Caplin et al 2022.)</p>
+
+
+
+
+<h1 id="data-set">Data Set
+  <a href="#data-set"></a>
+</h1>
+<p>Our data comes from a community-based longitudinal study from Nicaragua&rsquo;s Leon and Chinandega departments. The study has three phases dividing participants into cohorts 1, 2, and 3. Initially, check-ins took place twice a year, but after the second year of the study, the frequency was reduced to annual check-ins. Cohort 1, which began in 2015, has a male-to-female ratio of 3:1, while Cohorts 2 and 3, which began in 2018 and 2021, respectively, have an equal 1:1 male-to-female ratio. At each check-in, participants had their estimated glomerular filtration rate (eGFR), a measurement of kidney function, and other biological measurements, such as heart rate, weight, and blood pressure recorded. Additionally, participants filled out a questionnaire covering their health history, occupation history and conditions, substance history, and symptoms of sun exposure.</p>
+
+
+
+
+<h1 id="growth-mixture-model">Growth Mixture Model
+  <a href="#growth-mixture-model"></a>
+</h1>
+<p>Connie primarily focused on the Growth Mixture Model (GMM) portion of our research. The GMM approach generated three latent groups of eGFR trajectories: always healthy, always unhealthy, and a rapid-decline group. The rapid-decline group was investigated for various exposures such as occupation history and conditions, substance history, and symptoms of sun exposure.</p>
+<p>She created her best model, using a significance level of p &lt; 0.05 and the smallest BIC score. The best model includes pregnancy, years, age, whether or not the individual worked in sugarcane since their last check-in, and whether or not an individual experienced either experienced nausea, unintentional weight loss of greater than 2.5kg, oliguria, or a headache more than once a month since their last check-in as exposures which affect an individuals mean eGFR value. Additionally, she added two variables, fever and alcohol, which affect the likelihood of being grouped into one of the three classes: always healthy, always unhealthy, or a decline in kidney function.</p>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+
+
+
+
+<h1 id="hidden-markov-model">Hidden Markov Model
+  <a href="#hidden-markov-model"></a>
+</h1>
+<p>We utilized the msm package to create a continuous time hidden Markov model with two latent states, healthy and unhealthy. While we do not observe the hidden state for an individual at each check-in, we observe the initial emission distributions of the latent states. We set the initial distribution for the healthy state to have a mean eGFR level of 120 with a standard deviation of 12. For the unhealthy state, we set the mean eGFR level of 75 with a standard deviation of 15. Although stage three CKD occurs when an individual has two consecutive check-ins of a 60 eGFR or less, we set the mean just one standard deviation past this point to try to identify more people who began having a decline in kidney function to try and focus on the etiology of the disease. After defining the initial emission distributions, the HMM uses maximum likelihood estimation to create new values for the emission distributions. However, since people diagnosed with or who have had self-reported CKD were removed from the study, we had to constrain the emission distribution for the unhealthy state as there were not enough unhealthy people in our data set, causing an unhealthy mean eGFR value much higher than clinically feasible. Using these updated emission distributions, we can calculate both the joint state transition probabilities (moving from healthy to healthy, healthy to unhealthy, unhealthy to unhealthy, and unhealthy to healthy) and the posterior probabilities for each individual being in either the healthy or unhealthy state at any check-in.</p>
+<p>We used the aforementioned initial emission distributions for our best model while constraining the unhealthy state emission distribution. We then included whether or not an individual has drunk alcohol since their previous visit, whether or not an individual has had a fever since their previous visit, an indicator variable determining if the percent change in eGFR from baseline was above or at/below 10%, and the sex of the individual. We included the sex of an individual in our analysis as many of the exposures are much more, or much less, likely depending on sex. For example, sugarcane workers and people who use alcohol are more likely to be men in our data set. All of the covariates mentioned will affect the transition probabilities, that is, the probability of transitioning from a healthy to unhealthy state or from an unhealthy to a healthy state. Finally, we took into account whether or not an individual was pregnant, as pregnancy causes an increase in eGFR levels. We determined that this model was the best as it had the lowest -2 * log likelihood value and all of the covariates included had significant hazard ratios.</p>
+<p>For our best HMM, we classified each individual into one of the following six groups: always healthy, always unhealthy, switched &amp; stayed, switch &amp; bounced back, switched at last, and unknown.</p>
+<table>
+<thead>
+<tr>
+<th>HMM Group</th>
+<th>Patients with&hellip;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Always Healthy</td>
+<td>all healthy states during the study</td>
+</tr>
+<tr>
+<td>Always Unhealthy</td>
+<td>all unhealthy states during the study</td>
+</tr>
+<tr>
+<td>Switched &amp; Stayed</td>
+<td>healthy states at the start of the study and switched to unhealthy states</td>
+</tr>
+<tr>
+<td>Switched and Bounced Back</td>
+<td>healthy states at the start of the study, switched to unhealthy state for one observation, then switched back to healthy</td>
+</tr>
+<tr>
+<td>Switched at Last</td>
+<td>healthy states throughout the study except for the last observation as unhealthy</td>
+</tr>
+<tr>
+<td>Unknown</td>
+<td>did not fit into any of the previous groups (few individuals were apart of the unknown group)</td>
+</tr>
+</tbody>
+</table>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+
+
+
+
+<h1 id="hmm-vs-gmm">HMM vs GMM
+  <a href="#hmm-vs-gmm"></a>
+</h1>
+<p>Our best HMM and our best GMM model included both fever and alcohol. So, for our HMM model, if an individual has had a fever or used alcohol since their last check-in, they have a higher chance of transitioning from a healthy state to an unhealthy state. For our GMM model, if an individual has had a fever or used alcohol, they are more likely to be in the decline group than the healthy group. While the two interpretations of these models are not precisely the same, they arrive at similar conclusions.</p>
+
+
+
+
+<h2 id="trajectory-plots">Trajectory Plots
+  <a href="#trajectory-plots"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+<p>When looking at our unhealthy HMM groups, always unhealthy, switched &amp; stayed, and switched at last, compared with the GMM classes, we found primarily complementary information. There are only four cases that our HMM deems always unhealthy and our GMM clusters into the always healthy class. Most cases that are switched &amp; stayed are in the GMM&rsquo;s eGFR decline class, which is ideal. Finally, it makes sense that the switched at last group is equally split between the always healthy class and the decline class. Depending on the severity of the drop in eGFR at an individual&rsquo;s last check-in, the slope of the trajectories can be quite different, resulting in different class memberships. When looking at alcohol consumption, we see that there tend to be more individuals in the upper 30th percentile of alcohol consumption in the switched and stayed and always unhealthy HMM groups and the decline GMM group. Additionally, most individuals in the bottom 30th percentile of alcohol consumption tend to be in the always healthy GMM class.</p>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<p>When looking at our healthy HMM groups, always healthy, switched &amp; bounced back, and unknown, compared with the GMM classes, we found no cases where GMM records an always unhealthy class. We see that the majority of people that are always healthy and all of those who have switched and bounced back are in the always healthy class from the GMM. There are only a few cases where the HMM categorizes individuals as always healthy, and the GMM puts them into the decline class. Almost all of these cases are hovering at or below 100 eGFR, which is medically considered healthy. However, initially, they all had high eGFR readings. So, since these cases have a large negative slope, the GMM put them into the decline class. Finally, when looking at healthy individuals&rsquo; alcohol consumption, relatively few people are in the upper 30th percentile of alcohol consumption, which intuitively makes sense.</p>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-8-1.png" width="672" />
+<p>Similar to the unhealthy HMM groups and GMM class plot above, this plot considers the proportion of visits that an individual reported having a fever instead of their alcohol consumption. We see can that the GMM puts almost all individuals in the top 30th percentile of fevers reported in the decline or the always unhealthy class.</p>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-9-1.png" width="672" />
+<p>We see relatively few instances of people in the top 30th percentile of fevers reported for the healthy HMM groups. Additionally, of the seven individuals whom the GMM places into the decline in eGFR class, two are in the top 30th percentile of fevers reported.</p>
+
+
+
+
+<h2 id="bar-plots">Bar Plots
+  <a href="#bar-plots"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-10-1.png" width="672" />
+<p>The bar plots show the proportion of each HMM group and GMM class compared with the percentile grouping of alcohol consumption. We can see very similar results from the HMM and GMM. As we move from the bottom 30th percentile toward the upper 30th percentile, the HMM is more likely to have a higher proportion of individuals in the always unhealthy or switching and staying group, and the GMM is more likely to have a higher proportion of individuals in the decline class.</p>
+<img src="https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/index_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<p>The bar plots show the proportion of each HMM group and GMM class compared with the percentile grouping of fevers reported. We can see very similar results from the HMM and GMM. As we move from the bottom 30th percentile toward the upper 30th percentile, the HMM is more likely to have a higher proportion of individuals in the always unhealthy or switching and staying group, and the GMM is more likely to have a higher proportion of individuals in the decline and always unhealthy class.</p>
+
+
+
+
+<h1 id="conclusion--future-work">Conclusion + Future Work
+  <a href="#conclusion--future-work"></a>
+</h1>
+<p>Previous studies have used GMMs to evaluate the significant symptoms of CKDu. However, it was never clear whether the GMM picked up on CKDu&rsquo;s etiology or its pathogenesis. Using a continuous time hidden Markov model allowed us to evaluate the probability of transitioning from a healthy to an unhealthy state. So, assuming we have correctly set up our model, increased alcohol consumption and a higher frequency of fevers lead to an increased chance of developing CKDu. Even though the GMM classifies individuals based on the slope of their eGFR trajectories, it had complementary results to the HMM&rsquo;s findings. However, it is important to note that the GMM also adjusted for many other exposure variables.</p>
+<p>In the future, we would like to add a third state to our HMM. A third state would better allow us to pick up on the time when a person initially has a decrease in kidney function but is not considered completely unhealthy. We initially tried to implement this but ran into convergence issues as we do not currently have enough data to run the model.</p>
+
+
+
+
+<h1 id="acknowledgements">Acknowledgements
+  <a href="#acknowledgements"></a>
+</h1>
+<p>Thank you to Dr. Brianna Heggeseth for inviting me to this project and helping me with all my questions along the way!</p>
+<p>Thank you to Connie Zhang (
+<a href="https://connie-zhang.github.io/" target="_blank" rel="noopener">https://connie-zhang.github.io/</a>) for creating the GMM code, the table for the HMM group descriptions, and the HMM group visualization!</p>
+
+
+
+
+<h1 id="references">References
+  <a href="#references"></a>
+</h1>
+<p>“Chronic Kidney Disease in the United States, 2021.” 2021. Centers for Disease Control and Prevention. Centers for Disease Control; Prevention. 
+<a href="https://www.cdc.gov/kidneydisease/publications-resources/ckd-national-facts.html" target="_blank" rel="noopener">https://www.cdc.gov/kidneydisease/publications-resources/ckd-national-facts.html</a>.</p>
+<p>Gonzalez-Quiroz, Marvin, Brianna Heggeseth, Yixuan Zhang, Alexander McCreight, Armando Camacho, Amin Oomatia, Ali Al-Rashed, Nicholas Jewel, Aurora Aragon, Dorothea Nitsch, Neil Pearce, Ben Caplin. &ldquo;7-year follow-up in a young adult population at risk of Mesoamerican Nephropathy: Associations with incident of chronic kidney disease and evidence of early kidney injury.&rdquo;</p>
+<p>Gonzalez-Quiroz, Marvin, Evangelia-Theano Smpokou, Richard J Silverwood, Armando Camacho, Dorien Faber, Brenda La Rosa Garcia, Amin Oomatia, et al. 2018. “Decline in Kidney Function Among Apparently Healthy Young Adults at Risk of Mesoamerican Nephropathy.” Journal of the American Society of Nephrology 29 (8): 2200–2212.</p>
+
+        
+        <details closed class="f6 fw7 input-reset">
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Posted on:</dt>
+    <dd class="fw5 ml0">July 19, 2022</dd>
+  </dl>
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Length:</dt>
+    <dd class="fw5 ml0">11 minute read, 2185 words</dd>
+  </dl>
+  
+  
+  
+  <dl class="f6 lh-copy">
+    <dt class="fw7">See Also:</dt>
+    
+  </dl>
+</details>
+
+      </section>
+      <footer class="post-footer">
+        <div class="post-pagination dt w-100 mt4 mb2">
+  
+  
+  
+  
+    <a class="next dtc pl2 tr v-top fw6"
+    href="https://alexmccreight.netlify.app/blog/built-in-contact-form/">Built-in Contact Form &rarr;</a>
+  
+</div>
+
+      </footer>
+    </article>
+    
+      
+<div class="post-comments pa0 pa4-l mt4">
+  
+  <script src="https://utteranc.es/client.js"
+          repo="alexmccreight/alex-hugosite"
+          issue-term="pathname"
+          theme="boxy-light"
+          label="comments :crystal_ball:"
+          crossorigin="anonymous"
+          async
+          type="text/javascript">
+  </script>
+  
+</div>
+
+    
+  </section>
+</main>
+<footer class="site-footer pv4 bt b--transparent ph5" role="contentinfo">
+  <nav class="db dt-l w-100">
+    <p class="site-copyright f7 db dtc-l v-mid w-100 w-33-l tc tl-l pv2 pv0-l mv0 lh-copy">
+      &copy; 2022 Alex McCreight
+      <span class="middot-divider"></span>
+      Made with <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/hugo-apero/" rel="dct:source">Hugo Apéro</a></span>.
+      <br />
+      
+Based on <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/formspree/blogophonic-hugo" rel="dct:source">Blogophonic</a></span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://formspree.io" property="cc:attributionName" rel="cc:attributionURL">Formspree</a>.
+    </p>
+    
+    <div class="site-social-links db dtc-l v-mid w-100 w-33-l tc pv2 pv0-l mv0">
+      <div class="social-icon-links" aria-hidden="true">
+  
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://github.com/alexmccreight" title="github" target="_blank" rel="noopener">
+      <i class="fab fa-github fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://twitter.com/apmccreight" title="twitter" target="_blank" rel="noopener">
+      <i class="fab fa-twitter fa-lg fa-fw"></i>
+    </a>
+  
+</div>
+
+    </div>
+    
+    <div class="site-links f6 db dtc-l v-mid w-100 w-67-l tc tr-l pv2 pv0-l mv0">
+      
+      <a class="dib pv1 ph2 link" href="/contact/" title="Contact form">Contact</a>
+      
+    </div>
+  </nav>
+  
+    <script>
+
+    var i, text, code, codes = document.getElementsByTagName('code');
+    for (let i = 0; i < codes.length;) {
+      code = codes[i];
+      if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+        text = code.textContent;
+        if (/^\$[^$]/.test(text) && /[^$]\$$/.test(text)) {
+          text = text.replace(/^\$/, '\\(').replace(/\$$/, '\\)');
+          code.textContent = text;
+        }
+        if (/^\\\((.|\s)+\\\)$/.test(text) ||
+            /^\\\[(.|\s)+\\\]$/.test(text) ||
+            /^\$(.|\s)+\$$/.test(text) ||
+            /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+          code.outerHTML = code.innerHTML;  
+          continue;
+        }
+      }
+      i++;
+    }
+</script>
+
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css" integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js" integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+    
+  
+  
+</footer>
+
+      </div>
+    </body>
+</html>

@@ -1,0 +1,645 @@
+---
+title: "Analyzing Boston Home Values"
+date: '2022-04-25'
+excerpt: Using regression, classification, and clustering to analyze Boston home values
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, tidy = TRUE)
+```
+
+```{r libraries-data, include = FALSE}
+library(readr)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(tidyverse)
+library(broom)
+library(ggplot2)
+library(tidymodels)
+library(mlbench)
+library(probably)
+library(gridExtra)
+library(vip)
+library(plotly)
+library(prettydoc)
+tidymodels_prefer() 
+set.seed(253)
+
+data(BostonHousing)
+housing <- BostonHousing
+```
+
+## Data Context 
+
+We chose to use Boston housing data from the 'mlbench' library for our research project. The data set contains 506 cases and 14 variables. Each case represents a census tract of Boston from the 1970 census. The variables include per capita crime rate, nitric oxide concentration, the average number of rooms per place of residence, the pupil-teacher ratio by census tract, the median value of homes, and more. The Census Bureau collects all census data through a variety of methods. They utilize business data, census surveys, federal/state/local government data, and other commercial agencies. The Census Bureau collects this data once a decade to "determine the number of seats each state has in the U.S. House of Representatives and is also used to distribute hundreds of billions of dollars in federal funds to local communities" (Bureau 2021).
+
+## Research Questions
+
+For our project, we will analyze three research questions using regression, classification methods, and unsupervised learning methods. For our regression analysis, we will have two models examining the effects of various predictors on median home value per census tract (measured in USD 1000s). Our first model will be an OLS including all predictors from the data set. For our second model, we will utilize LASSO to find the variables that most affect median home value and then add in natural splines to account for nonlinearity amongst the remaining predictors. For our classification methods, we use both a logistic LASSO model and a random forest to predict whether or not a census tract is above or below the top 75% of median home values for Boston census tracts. Finally, we will use k-means clustering to see if we can get an insight into significant clusters of census tracts based on the most significant variables as determined by the classification model. 
+
+## Code Book
+
+variable            description
+------------------- ----------------------------------------------------------
+medv                median value of owner-occupied homes in USD 1000's
+crim                per capita crime rate by town
+zn                  proportion of residential land zoned for lots over 25,000 sq.ft
+indus               proportion of non-retail business acres per town
+chas	              Charles River dummy variable (= 1 if tract bounds river; 0 otherwise)
+nox	                nitric oxides concentration (parts per 10 million)
+rm	                average number of rooms per dwelling
+age               	proportion of owner-occupied units built prior to 1940
+dis               	weighted distances to five Boston employment centres
+rad	                index of accessibility to radial highways
+tax	                full-value property-tax rate per USD 10,000
+ptratio	            pupil-teacher ratio by town
+b	                  1000(B - 0.63)^2 where B is the proportion of blacks by town
+lstat	              percentage of lower status of the population
+
+## Regression: Methods
+
+### OLS Model Creation
+
+```{r}
+# Create Cross-Validation Folds
+housing_10cv <- vfold_cv(housing, v = 10)
+
+# Create OLS Spec
+lm_spec <-
+    linear_reg() %>% 
+    set_engine(engine = 'lm') %>% 
+    set_mode('regression')
+
+# Recipe With All Predictors
+full_rec <- recipe(medv ~ ., data = housing) %>% 
+    step_corr(all_numeric_predictors()) %>% 
+    step_nzv(all_predictors()) %>% # removes variables with the same value
+    step_normalize(all_numeric_predictors()) %>% # important standardization step for LASSO
+    step_dummy(all_nominal_predictors()) 
+
+# OLS Workflow
+full_lm_wf <- workflow() %>%
+    add_recipe(full_rec) %>%
+    add_model(lm_spec)
+```
+
+```{r}
+# Fit OLS Model
+mod1 <- fit(lm_spec, medv ~ ., data = housing)
+
+tidy(mod1)
+```
+For our first model, we use ordinary least-squares to predict the median value of Boston owner-occupied homes by census tract using all 14 predictors in our data set. We can see that `indus` (the proportion of non-retail business acres per town) and `age` (the proportion of owner-occupied units built prior to 1940) are not statistically significant as their p-values are greater than 0.05.
+
+
+### GAM + LASSO Model Creation
+
+```{r}
+# Create LASSO Spec
+lm_lasso_spec_tune <- 
+  linear_reg() %>%
+  set_args(mixture = 1, penalty = tune()) %>% # Note we will be tuning the lambda penalty term
+  set_engine(engine = 'glmnet') %>% 
+  set_mode('regression') 
+
+# LASSO Workflow
+lasso_wf_tune <- workflow() %>% 
+  add_recipe(full_rec) %>% # Recipe including all predictors
+  add_model(lm_lasso_spec_tune) 
+
+# Tune Lambda Parameter
+penalty_grid <- grid_regular(
+  penalty(range = c(-3, 2)), #log10 transformed 
+  levels = 30)
+
+tune_output <- tune_grid( # New function for tuning parameters
+  lasso_wf_tune, 
+  resamples = housing_10cv,
+  metrics = metric_set(mae), # MAE as evaluation metric
+  grid = penalty_grid 
+)
+
+# Visualize Model Evaluation Metrics from Tuning
+autoplot(tune_output) + theme_classic()
+```
+
+To begin our second model, we must first tune our penalty term, $\lambda$. The visualization shows the value of the penalty term along the x-axis and the cross-validated MAE values on the y-axis.
+
+```{r}
+# Collect MAE values of all 30 potential lambda values
+metrics_output <- collect_metrics(tune_output) %>%
+  filter(.metric == 'mae') 
+
+# Choose Largest Penalty Value Within 1 Standard Error of the Lowest CV MAE
+best_se_penalty <- select_by_one_std_err(tune_output, metric = 'mae', desc(penalty))
+
+# Finalize Workflow and Fit LASSO Model  w/ Adjusted Lambda Value
+final_wf_se <- finalize_workflow(lasso_wf_tune, best_se_penalty)
+final_fit_se <- fit(final_wf_se, data = housing)
+
+final_fit_se %>% 
+  tidy() %>% 
+  filter(estimate != 0)
+
+lasso_mod_out <- final_fit_se %>%
+    predict(new_data = housing) %>%
+    bind_cols(housing) %>%
+    mutate(resid = medv - .pred)
+```
+
+```{r}
+# Visualizing Predictors Being Penalized
+glmnet_output <- final_fit_se %>% extract_fit_parsnip() %>% pluck('fit') # get the original glmnet output
+
+lambdas <- glmnet_output$lambda
+coefs_lambdas <- 
+  coefficients(glmnet_output, s = lambdas )  %>% 
+  as.matrix() %>%  
+  t() %>% 
+  as.data.frame() %>% 
+  mutate(lambda = lambdas ) %>% 
+  select(lambda, everything(), -`(Intercept)`) %>% 
+  pivot_longer(cols = -lambda, 
+               names_to = "term", 
+               values_to = "coef") %>%
+  mutate(var = purrr::map_chr(stringr::str_split(term,"_"),~.[1]))
+
+coefs_lambdas %>%
+  ggplot(aes(x = lambda, y = coef, group = term, color = var)) +
+  geom_line() +
+  labs(title = "LASSO Variable Significance Graph") +
+  geom_vline(xintercept = best_se_penalty %>% pull(penalty), linetype = 'dashed') + 
+  theme_classic() + 
+  theme(legend.position = "bottom", 
+        legend.text=element_text(size=5),
+        plot.title = element_text(hjust = 0.5))
+```
+
+The dotted line of our LASSO variable significance graph is our penalty term, $\lambda$ = 0.5736153. We can see that only seven predictors remain after applying our penalty term: `crim`, `rm`, `dis`, `ptratio`, `b`, `lstat`, and `chas_x1`. We will now examine the relationships between these predictors and the outcome, `medv`, to determine whether or not a natural spline is necessary, except for `chas_x1` as it is binary.
+
+
+```{r}
+# Create GAM Spec
+gam_spec <- 
+  gen_additive_mod() %>%
+  set_engine(engine = 'mgcv') %>%
+  set_mode('regression') 
+
+initial_gam_mod <- fit(gam_spec,
+    medv ~ chas + s(crim) + s(rm) + s(dis) + s(ptratio) + s(b) + s(lstat),
+    data = housing
+)
+
+par(mfrow=c(2,2))
+initial_gam_mod %>% pluck('fit') %>% mgcv::gam.check() 
+```
+There are no extreme patterns in the Q-Q plot, and since they are close to the line, we know that the residuals are approximately normal. The residuals versus linear prediction plot looks relatively fine, and the histogram of the residuals plot is normal, which is ideal. Finally, the response versus fitted values is positively correlated, which they should be.
+
+```{r}
+# Look At Initial GAM Mod Summary + Plot
+initial_gam_mod %>% pluck('fit') %>% summary() 
+initial_gam_mod %>% pluck('fit') %>% plot( all.terms = TRUE, pages = 1)
+```
+
+From our summary, we can see that census tracts that bound the Charles River have, on average, a $1,843 higher median home value than census tracts that do not bound the Charles River, keeping all other predictors fixed. Also, based on the smooth terms, `b` may not be a strong predictor after considering other variables in the model. However, the p-value is nearly less than 0.05, so we will include it for now. Looking at our graphs, the relationship between the median home value and the predictors `rm`, `dis`, and `lstat` appear to be nonlinear, suggesting that we will need splines for these variables. We will use rounded estimated degrees of freedom to apply these natural splines and add them to the final GAM + LASSO model. 
+
+```{r} 
+# Update GAM Based On Summaries and Plot + Check for the edf values
+updated_gam_model <- fit(gam_spec,
+    medv ~ chas + crim + s(rm) + s(dis) + ptratio + b + s(lstat),
+    data = housing
+)
+
+updated_gam_model %>% pluck('fit') %>% summary() 
+```
+
+```{r}
+# Variables Remaining after LASSO
+housing_rec <- recipe(medv ~ chas + crim + ptratio + b + rm + dis + lstat, data = housing)
+
+# Used the rounded edf values for deg_free
+spline_rec <- housing_rec %>%
+     step_ns(rm, deg_free = 7) %>% 
+     step_ns(dis, deg_free = 9) %>%
+     step_ns(lstat, deg_free = 6)
+
+# LASSO w/ Spline Workflow
+spline_wf <- workflow() %>%
+    add_model(lm_spec) %>%
+    add_recipe(spline_rec)
+
+gam_mod <- spline_wf %>%
+  fit(data = housing)
+```
+
+## Regression: Results + Conclusions
+
+### Cross-Validated Metrics
+
+```{r}
+# OLS
+fit_resamples(
+    full_lm_wf,
+    resamples = housing_10cv,
+    metrics = metric_set(mae,rmse,rsq)
+) %>% collect_metrics()
+
+# GAM w/ LASSO 
+fit_resamples(
+    spline_wf,
+    resamples = housing_10cv,
+    metrics = metric_set(mae,rmse,rsq),
+) %>% collect_metrics()
+```
+
+Our GAM + LASSO model has a lower cross-validated MAE, RMSE, and a higher R-Squared value than our OLS model. This means that the magnitude of the residuals is smaller for the GAM + LASSO model, and it also accounts for 80.417% of the variation in the median value of Boston owner-occupied homes per census tract compared to the OLS model's 72.103%. 
+
+### Residual Plots
+
+```{r}
+# Calculate OLS Residuals 
+mod1_output <- mod1 %>% 
+  predict(new_data = housing) %>% 
+  bind_cols(housing) %>% 
+  mutate(resid = medv - .pred)
+
+# Calculate GAM Residuals
+gam_output <- gam_mod %>%
+  predict(new_data = housing) %>% 
+  bind_cols(housing) %>% 
+  mutate(resid = medv - .pred)
+
+p1 <- mod1_output %>% 
+  ggplot(aes(medv, resid)) +
+  geom_point() +
+  labs(x = "Boston Median Home Values", y = "Residuals", title = "OLS Residual Plot") + 
+  ylim(-20, 30) +
+  geom_hline(yintercept = 0, linetype = 5, color = "red") + 
+  theme_classic() +
+    theme(plot.title = element_text(hjust = 0.5))
+
+p2 <- gam_output %>% 
+  ggplot(aes(medv, resid)) +
+  geom_point() +
+  labs(x = "Boston Median Home Values", y = "Residuals", title = "GAM Residual Plot") +
+  ylim(-20, 30) +
+  geom_hline(yintercept = 0, linetype = 5, color = "red") + 
+  theme_classic() +
+    theme(plot.title = element_text(hjust = 0.5))
+
+grid.arrange(p1, p2, ncol = 2)
+```
+
+Our OLS model generally does a good job of predicting the median home values for Boston census tracts. However, we can see that our OLS model begins to underpredict median home values as they increase past 35,000 USD. From our GAM residual plot, we can see that the magnitude of the residuals is much smaller, especially for median home values that are greater than 35,000 USD. 
+
+### Slope Coefficient Interpreations 
+
+```{r}
+gam_mod %>% 
+  tidy()
+```
+
+`crim`: On average, for a 1 percent increase in per capita crime rate, the median home values of a census tract will fall by around $138, keeping all other predictors fixed.
+
+`ptratio`: On average, for a 1 unit increase in the pupil-teacher ratio by census tract, the median home values will fall by around $562, keeping all other predictors fixed.
+
+### Non-linear Predictor Visualizations
+
+```{r}
+housing %>% 
+  ggplot(aes(y = medv, x = rm)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Average Number of Rooms per Dwelling", y = "Boston Median Home Values") +
+  theme_classic()
+
+housing %>% 
+  ggplot(aes(y = medv, x = dis)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Weighted Distance to Five Employment Centres", y = "Boston Median Home Values") +
+  theme_classic()
+
+housing %>% 
+  ggplot(aes(y = medv, x = lstat)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = "% Lower Status Population", y = "Boston Median Home Values") +
+  theme_classic()
+```
+
+While we cannot interpret our coefficients with natural splines, we can examine their relationships with the outcome, median home values. For our first graph, `rm` vs. `medv`, we see a positive slope for dwellings with an average of 4 - 6.5 rooms. Once the average number of rooms per dwelling exceeds 6.5, the median home values increase at a faster rate. Our second graph, `dis` vs. `medv`, shows that census tracts that are closer to the five selected employment centers tend to have lower median home values until they reach a distance of 3 units. After this point, the weighted distance to the employment centers has almost no effect. Our final graph, `lstat` vs. `medv`, shows a significant negative relationship between the percentage of the lower status population and median home values that eventually flattens out as the percentage of the lower status population increases. 
+
+### Conclusion
+
+Our GAM + LASSO model does a great job examining which predictors most affect the median value of owner-occupied homes in Boston. We found that as the crime in a census tract increases, the pupil-teacher ratio increases, and the proportion of the lower status population living in a census tract increases, the median value of homes will decrease. These results indicate that we should look into the history of redlining in Boston and see if there is a correlation between neighborhoods that have been redlined in the past and a low median house value.
+
+## Classification: Methods
+
+```{r}
+housing_classification <- housing %>% 
+  mutate(Top75 = cut(medv, breaks = c(0, 25, Inf),
+                     labels = c("No", "Yes"))) %>% 
+ select(-medv)
+```
+
+We will run a logistic LASSO and random forest to see which predictors are most useful when predicting whether or not a census tract is above or below the top 75% of Boston median home values. We created a classification data set with our new outcome variable, `Top75`, and we removed the `medv` variable as it would be taken into consideration when implementing our LASSO.  
+
+### Logistic LASSO Creation
+
+```{r}
+set.seed(253)
+
+# Create Cross-Validation Folds
+housing_10cv <- vfold_cv(housing_classification, v = 10)
+
+# Logistic LASSO Regression Model Spec
+logistic_lasso_spec_tune <- logistic_reg() %>%
+    set_engine('glmnet') %>%
+    set_args(mixture = 1, penalty = tune()) %>%
+    set_mode('classification')
+
+# Recipe w/ All Predictors
+logistic_rec <- recipe(Top75 ~ ., data = housing_classification) %>%
+    step_normalize(all_numeric_predictors()) %>% 
+    step_dummy(all_nominal_predictors())
+
+# Workflow (Recipe + Model)
+log_lasso_wf <- workflow() %>% 
+    add_recipe(logistic_rec) %>%
+    add_model(logistic_lasso_spec_tune) 
+
+# Tune Model (trying a variety of values of Lambda penalty)
+penalty_grid <- grid_regular(
+  penalty(range = c(-1.25,-0.5)),
+  #penalty(range = c(-0.455932, -0.4259687)), #log10 transformed  (kept moving min down from 0)
+  levels = 100)
+
+tune_output <- tune_grid( 
+  log_lasso_wf, # workflow
+  resamples = housing_10cv, # cv folds
+  metrics = metric_set(roc_auc,accuracy),
+  control = control_resamples(save_pred = TRUE, event_level = 'second'),
+  grid = penalty_grid # penalty grid defined above
+)
+
+# Visualize Model Evaluation Metrics from Tuning
+autoplot(tune_output) + theme_classic()
+```
+
+To begin our logistic LASSO model, we must first tune our penalty term, $\lambda$. The visualization shows the value of the penalty term along the x-axis and the cross-validated accuracy and ROC_auc values on the y-axis. 
+
+```{r}
+# Select Penalty
+best_se_penalty <- select_by_one_std_err(tune_output, metric = 'roc_auc', desc(penalty))
+
+# Fit Final Model
+final_fit_se <- finalize_workflow(log_lasso_wf, best_se_penalty) %>% # incorporates penalty value to workflow 
+    fit(data = housing_classification)
+
+final_fit_se %>% tidy() %>%
+  filter(estimate != 0)
+
+tune_output %>%
+    collect_metrics() %>%
+    filter(penalty == best_se_penalty %>% pull(penalty))
+```
+
+After running our LASSO using a $\lambda$ value within one standard error of the highest cross-validated roc_auc, we have two variables remaining: `rm`, the average number of rooms per dwelling, and `lstat`, the percentage of the lower status of the population. We have a 92.789% test AUC value using these two predictors, which is promising. 
+
+```{r}
+# Soft Predictions on Training Data
+final_output <- final_fit_se %>% predict(new_data = housing_classification, type='prob') %>% bind_cols(housing_classification)
+
+
+final_output %>%
+  ggplot(aes(x = Top75, y = .pred_Yes)) +
+  geom_boxplot() +
+  theme_classic()
+```
+
+```{r}
+# Hard predictions (you pick threshold)
+final_output <- final_output %>%
+  mutate(.pred_yes_byhand = make_two_class_pred(`.pred_No`, levels(Top75), threshold = 0.7)) 
+
+# Confusion Matrix
+final_output %>%
+  conf_mat(truth = Top75, estimate = .pred_yes_byhand)
+
+log_metrics <- metric_set(sens, yardstick::spec, accuracy)
+final_output %>% 
+  log_metrics(estimate = .pred_yes_byhand, truth = Top75, event_level = "second")
+
+```
+
+Our confusion matrix shows us that our logistic LASSO model correctly predicts 366 census tracts and incorrectly predicts 16 (false positives) of the census tracts that are not in the top 75% of Boston median home values. Furthermore, our model correctly predicts 94 census tracts and incorrectly predicts 30 census tracts (false negatives) of the census tracts in the top 75% of Boston median home values. So, of all the census tracts that are truly below the top 75% of Boston median home values, we correctly predicted 95.812% (specificity) of them. Moreover, of all the census tracts that are truly at or above the top 75% of Boston median home values, we correctly predicted 75.806% (sensitivity) of them. In the data context, we would expect to have a higher specificity than sensitivity as, inherently, there are more houses below the top 75% of Boston median home values than above, meaning that we are more likely to predict a house as below the top 75% rather than at or above this mark. 
+
+### Random Forest Creation
+
+We are going to create four random forest models. Each model will use 1000 trees and will have 2 (minimum number), 4 ($\approx \sqrt{13}$), 7 ($\approx \frac{13}{2}$), and 13 randomly sampled predictors respectively. 
+
+```{r}
+# RF Spec
+rf_spec <- rand_forest() %>%
+  set_engine(engine = 'ranger') %>% 
+  set_args(mtry = NULL, # size of random subset of variables; default is floor(sqrt(ncol(x)))
+           trees = 1000, # Number of trees
+           min_n = 2,
+           probability = FALSE, # FALSE: hard predictions
+           importance = 'impurity') %>% 
+  set_mode('classification') # change this for regression tree
+
+# RF Recipe
+data_rec <- recipe(Top75 ~ ., data = housing_classification)
+
+# RF Workflows
+data_wf_mtry2 <- workflow() %>%
+  add_model(rf_spec %>% set_args(mtry = 2)) %>%
+  add_recipe(data_rec)
+
+data_wf_mtry4 <- workflow() %>%
+  add_model(rf_spec %>% set_args(mtry = 4)) %>%
+  add_recipe(data_rec)
+
+data_wf_mtry7 <- workflow() %>%
+  add_model(rf_spec %>% set_args(mtry = 7)) %>%
+  add_recipe(data_rec)
+
+data_wf_mtry13 <- workflow() %>%
+  add_model(rf_spec %>% set_args(mtry = 13)) %>%
+  add_recipe(data_rec)
+
+set.seed(253)
+data_fit_mtry2 <- fit(data_wf_mtry2, data = housing_classification)
+set.seed(253)
+data_fit_mtry4 <- fit(data_wf_mtry4, data = housing_classification)
+set.seed(253) 
+data_fit_mtry7 <- fit(data_wf_mtry7, data = housing_classification)
+set.seed(253)
+data_fit_mtry13 <- fit(data_wf_mtry13, data = housing_classification)
+```
+
+```{r}
+rf_OOB_output <- function(fit_model, model_label, truth){
+    tibble(
+          .pred_class = fit_model %>% extract_fit_engine() %>% pluck('predictions'), #OOB predictions
+          class = truth,
+          model = model_label
+      )
+}
+
+data_rf_OOB_output <- bind_rows(
+    rf_OOB_output(data_fit_mtry2,'mtry2', housing_classification %>% pull(Top75)),
+    rf_OOB_output(data_fit_mtry4,'mtry4', housing_classification %>% pull(Top75)),
+    rf_OOB_output(data_fit_mtry7,'mtry7', housing_classification %>% pull(Top75)),
+    rf_OOB_output(data_fit_mtry13,'mtry13', housing_classification %>% pull(Top75))
+)
+
+
+data_rf_OOB_output %>% 
+    group_by(model) %>%
+    accuracy(truth = class, estimate = .pred_class) %>% 
+    arrange(desc(.estimate))
+```
+
+```{r}
+data_rf_OOB_output %>% 
+    group_by(model) %>%
+    accuracy(truth = class, estimate = .pred_class) %>%
+  mutate(mtry = as.numeric(stringr::str_replace(model,'mtry',''))) %>%
+  ggplot(aes(x = mtry, y = .estimate )) + 
+  geom_point() +
+  geom_line() +
+  theme_classic()
+```
+
+After creating creating all 4 random forest models, we have the accuracy estimates for each model. The random forest with 2 randomly sampled variables has the highest accuracy at 94.269%. The random forest models with 4 and 7 randomly sampled variables have an accuracy of 93.874%, and the model with 13 randomly sampled variables has the lowest accuracy at 92.885%.
+
+```{r}
+rf_OOB_output(data_fit_mtry2,'mtry2', housing_classification %>% pull(Top75)) %>%
+    conf_mat(truth = class, estimate= .pred_class)
+
+# Sensitivity
+104/(104+20)
+
+# Specificity
+373/(373+9)
+```
+
+Our confusion matrix shows us that our random forest with two randomly sampled variables correctly predicts 373 census tracts and incorrectly predicts 9 (false positives) of the census tracts that are not in the top 75% of Boston median home values. Furthermore, our random forest correctly predicts 104 census tracts and incorrectly predicts 20 census tracts (false negatives) of the census tracts in the top 75% of Boston median home values. So, of all the census tracts that are truly below the top 75% of Boston median home values, we correctly predicted 97.644% (specificity) of them. Moreover, of all the census tracts that are truly at or above the top 75% of Boston median home values, we correctly predicted 83.871% (sensitivity) of them.
+
+## Classification: Results + Conclusions
+
+### Confusion Matrices Results
+
+```{r}
+data.frame(
+  Model = c("Logistic LASSO", "Random Forest"),
+  Sensitivity = c(0.758,0.838),
+  Specificity = c(0.958,0.976),
+  Overall_Accuracy = c(0.909,0.942))
+```
+
+When reviewing the confusion matrices for both the Logistic LASSO and random forest models, we found that our random forest model with two randomly sampled variables produces the highest sensitivity (83.8%), specificity (97.6%), and overall accuracy (94.2%). This means that our random forest model more correctly classifies census tracts above/at and below the top 75% of Boston median home values than the Logistic LASSO model.
+
+### Variable Importance
+
+```{r}
+# Based on impurity
+data_fit_mtry2 %>% 
+    extract_fit_engine() %>% 
+    vip(num_features = 13) + 
+    labs(title = "Variable Importance Based on Impurity") +
+    theme_classic()
+```
+
+When looking at the variable importance we utilize two approaches: impurity and permutation. Our first graph shows the variable importance of the random forest model looking at the “total decrease in node impurities (as measured by the Gini index) from splitting on the variable, averaged over all trees” (Greenwell and Boehmke 2020). Using this approach, we find that `rm`, the average number of rooms per dwelling, and `lstat`, the percentage of lower status population, are considered the most important variables when classifying census tracts as either below or at/above the top 75% of Boston median home values. These predictors were also considered the most significant for our Logistic LASSO model. After two predictors, we see a large drop in importance for remaining variables. 
+
+```{r}
+# Based on permutation
+data_wf_mtry2 %>% 
+  update_model(rf_spec %>% set_args(importance = "permutation")) %>% 
+  fit(data = housing_classification) %>% 
+    extract_fit_engine() %>% 
+    vip(num_features = 13) +
+    labs(title = "Variable Importance Based on Permutation") +
+    theme_classic()
+```
+
+Our second graph shows a permutation approach to variable importance. We consider a variable important if it has a positive effect on the prediction performance. We find that `rm` and `lstat` are still considered to be the most important variables. Additionally, there is still a significant drop-off in variable importance between `lstat` and the next most important variable `indus`, the proportion of non-retail business acres per town. Both the impurity and permutation variable importance graphs show that `chas`, whether or not the census tract bounds the Charles River, has the least effect when classifying census tracts as either below or at/above the top 75% of Boston median home values.
+
+### Conclusion
+
+Both our random forest model and our logistic LASSO model show that `rm` and `lstat` have the largest effect when determining if a census tract is below or at/above the top 75% of Boston median home values. Using our logistic LASSO Model, we found that that the estimated odds of a census tract being at/above the top 75% of Boston median home values is higher when the average number of rooms per dwelling is higher. Additionally, we found that the estimated odds of a census tract being at/above the top 75% of Boston median home values is lower when the percentage of lower status of the population of a census tract increases (which is consistent with our findings from the regression analysis). It is important to note that our random forest model found that `indus` was the third most important variable. While it was not included into the final model, the Boston area has struggled with industrial-caused pollution. Up until recently, Boston has had many problems with companies dropping PCBs into rivers, specifically the Neponset River in the South Boston area (Chanatry 2022). Exposure to PCBs might cause thyroid hormone toxicity in humans (“Polychlorinated Biphenyls (PCBS) Toxicity” 2014) which is why census tracts that have a smaller proportion of industrial acres might be classified as at/above 75% of Boston median home values more often.  
+
+## Unsupervised Learning: Clustering 
+
+### Clustering Model & Feature Selection
+
+As identified earlier in the GAM + LASSO model the crime of a census tract, the pupil-teacher ratio, and the proportion of the lower status population living in a census tract have the most significant effect on the median value of homes. We would like to see if K-means clustering can identify any groups of districts which are similar and how many of those groups we may identify. In our research of finding more general clusters of districts we might want to favor parsimony - favor a fewer number of clusters.
+
+To start, we select the variables of interest and make sure that only numeric variables are included.
+
+```{r}
+numeric_housing <- housing %>%
+  select(crim,lstat,ptratio)
+```
+
+### K-value Choice 
+
+As we choose the k number of clusters, we want to stop at a number where we no longer see meaningful decreases in heterogeneity by increasing k. After k=4 the decreases seem to be much smaller than at lesser k values.
+
+```{r}
+# Choose K (Elbow Method)
+bh_cluster_ss <- function(k){
+    kclust <- kmeans(scale(numeric_housing), centers = k)
+    return(kclust$tot.withinss)
+}
+
+tibble(
+    k = 1:15,
+    tot_wc_ss = purrr::map_dbl(1:15, bh_cluster_ss)
+) %>% 
+    ggplot(aes(x = k, y = tot_wc_ss)) +
+    geom_point() + 
+    labs(x = "Number of clusters",y = 'Total within-cluster sum of squares') + 
+    theme_classic()
+```
+```{r}
+numeric_housing <- numeric_housing %>%
+  mutate(kclust_labels = kmeans(scale(numeric_housing), centers = 4)$cluster)
+```
+
+### Visualization
+
+We assign values of clusters to every district and create a 3-d plot, where color represents a cluster, and x,y,z coordinate represent the values of interest (crim,ptratio,lstat).
+
+```{r}
+plot_ly(x = numeric_housing$crim, y = numeric_housing$ptratio, z = numeric_housing$lstat, type = "scatter3d", mode = "markers", color = numeric_housing$kclust_labels,scale=TRUE)
+```
+
+### Conclusion
+
+The plot presents an informative clustering representation of observations into 4 following groups:
+
+1) The most notable cluster is represented by purple color, and those observations have relatively high values of x (crim), medium-high values of y (ptratio), and medium-high values of z (lstat). There are relatively few observations in this cluster, and they are best described as higher-crime districts.
+
+2) The cluster colored in green represents observations with low values of all variables, and those can best be described by low lower-status population percentage, low crime rate, and low pupil/teacher ratio.
+
+3) The yellow colored cluster represents observations with relatively high lower-status population percentage, but relatively low pupil/teacher ratio and crime rate. 
+
+4) The blue cluster can best be described as observations with a high pupil/teacher ratio, but low crime rates. The "lstat" values are somewhat low too.
+
+
+## References
+
+Bureau, US Census. 2021. “Combining Data – a General Overview.” Census.gov. https://www.census.gov/about/what/admin-data.html.
+
+Chanatry, Hannah. 2022. “EPA Designates Lower Neponset River in Boston and Milton a Superfund Site.” WBUR News. WBUR.
+https://www.wbur.org/news/2022/03/14/neponset-river-boston-superfund-epa.
+
+Greenwell, Brandon M., and Bradley C. Boehmke. 2020. “Variable Importance Plots—an Introduction to the Vip Package.” The R Journal 12 (1): 343–66. https://doi.org/10.32614/RJ-2020-013.
+
+“Polychlorinated Biphenyls (PCBS) Toxicity.” 2014. Centers for Disease Control and Prevention. Centers for Disease Control; Prevention. https://www.atsdr.cdc.gov/csem/polychlorinated-biphenyls/adverse_health.html.

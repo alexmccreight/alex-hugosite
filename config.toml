@@ -1,4 +1,4 @@
-baseURL = "/"
+baseURL = "https://alexmccreight.netlify.app"
 theme = "hugo-apero"
 languageCode = "en"
 title = "Alex McCreight"
@@ -30,10 +30,10 @@ enableEmoji = true
 [params]
   orgName = "Alex McCreight"
   orgLocal = ""
-  description = "Undergraduate Researcher"
-  favicon = "/img/favicon.ico" #Icon at top of the browser
-  logo = "/img/blogophonic-mark-dark.png" #Main b logo to change
-  mainSections = ["project"] #sections featured on the about me
+  description = "Master's Researcher"
+  favicon = "/img/a.png" #Icon at top of the browser
+  logo = "/img/a.png" #Main b logo to change
+  mainSections = ["blog","project"] #sections featured on the about me
   navallcaps = true
   # show/hide social icons in site header & footer
   # configure social icons and links below in [[params.social]]
@@ -90,9 +90,15 @@ enableEmoji = true
       icon_pack = "fab"
       url       = "https://github.com/alexmccreight"
   [[params.social]]
-      icon      = "twitter" # icon name without the 'fa-'
+      icon      = "linkedin" # icon name without the 'fa-'
       icon_pack = "fab"
-      url       = "https://twitter.com/apmccreight"
+      url       = "https://www.linkedin.com/in/alex-mccreight-297840280/"
+  [[params.social]]
+      icon      = "facebook" # icon name without the 'fa-'
+      icon_pack = "fab"
+      url       = "https://www.facebook.com/alex.mccreight.3/"
+      
+      
 
 [taxonomies]
   category = "categories"
@@ -107,8 +113,8 @@ enableEmoji = true
     url = "/about/"
     weight = 1
   [[menu.header]]
-    name = "Blog"
-    title = "Blog"
+    name = "Research"
+    title = "Research"
     url = "/blog/"
     weight = 2
   [[menu.header]]
@@ -117,28 +123,18 @@ enableEmoji = true
     url = "/project/"
     weight = 3
   [[menu.header]]
-    name = "Talks"
-    title = "Talks"
+    name = "Presentations"
+    title = "Presentations"
     url = "/talk/"
     weight = 4
-  [[menu.header]]
-    name = "A collection"
-    title = "A collection"
-    url = "/collection/"
-    weight = 5
-  [[menu.header]]
-    name = "Elements"
-    title = "Element Page"
-    url = "/elements/"
-    weight = 6
     
   # Configure footer  
 
-  [[menu.footer]]
-    name = "Contact"
-    title = "Contact form"
-    url = "/contact/"
-    weight = 2
+ # [[menu.footer]]
+  #  name = "Contact"
+   # title = "Contact form"
+    #url = "/contact/"
+    #weight = 2
 
 
 # see https://gohugo.io/about/hugo-and-gdpr/    

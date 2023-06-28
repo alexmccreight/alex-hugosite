@@ -7,4 +7,3 @@ headline: |
 ---
 
 <!-- this is a subheadline -->
-Senior Applied Mathematics and Statistics Major at Macalester College

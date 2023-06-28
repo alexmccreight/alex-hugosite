@@ -1,18 +1,18 @@
 ---
 ## Configure sidebar content in narrow column
 author: "Alex McCreight"
-role: "Undergraduate Researcher"
-avatar_shape: rounded # circle, square, rounded, leave blank to exclude
+role: "Master's Student"
+avatar_shape: # circle, square, rounded, leave blank to exclude
 show_social_links: true # specify social accounts in site config
 audio_link_label:  # leave blank to exclude -- needs quotes
 link_list_label: "Interests" # bookmarks, elsewhere, etc.
 link_list:
-- name: CKDu
-  url: https://www.theisn.org/initiatives/what-is-ckdu/
-- name: Bayesian Statistics
-  url: https://www.bayesrulesbook.com/
-- name: Machine Learning
-  url: https://bryandmartin.github.io/253_spring_2022/index.html
+- name: My most recent book
+  url: https://en.wikipedia.org/wiki/The_Three-Body_Problem_(novel)
+- name: My current game
+  url: https://wildrift.leagueoflegends.com/en-us/
+- name: Favorite recent sports memory
+  url: https://www.youtube.com/watch?v=ZyXnCPbK6NI&ab_channel=NFL
 ---
 
 ** index doesn't contain a body, just front matter above.

@@ -3,8 +3,8 @@ cascade:
   headless: true
 description: |
   Alex McCreight's Portfolio
-show_header: true
-sidebar_left: true
+show_header: false
+sidebar_left: false
 title: About Alex
 ---
 

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Alex McCreight</title>
+    <link>https://alexmccreight.netlify.app/</link>
+    <description>Recent content on Alex McCreight</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 19 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://alexmccreight.netlify.app/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Netlify</title>
+      <link>https://alexmccreight.netlify.app/collection/day02/01-netlify/</link>
+      <pubDate>Sat, 02 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/day02/01-netlify/</guid>
+      <description>So far, we&amp;rsquo;ve been leveraging GitHub Pages for publishing. This works great, but for blogdown we&amp;rsquo;ll start using Netlify. Let&amp;rsquo;s start RIGHT NOW with a site we&amp;rsquo;ve already built and published.
+Pre-requisites Pick either your postcards site, or your distill site from day 01. Refresh your memory- which repository was it again?</description>
+    </item>
+    
+    <item>
+      <title>A GitHub profile</title>
+      <link>https://alexmccreight.netlify.app/collection/day01/01-github/</link>
+      <pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/day01/01-github/</guid>
+      <description>Profile https://docs.github.com/en/github/setting-up-and-managing-your-github-profile/personalizing-your-profile
+Pin projects to profile https://docs.github.com/en/github/setting-up-and-managing-your-github-profile/pinning-items-to-your-profile
+Profile README This is new! Let&amp;rsquo;s do it:
+https://docs.github.com/en/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme</description>
+    </item>
+    
+    <item>
+      <title>Prework</title>
+      <link>https://alexmccreight.netlify.app/collection/prework/</link>
+      <pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/prework/</guid>
+      <description>Welcome to the Introducing Yourself Online workshop! We look forward to meeting you. Before attending the workshop, please complete the following prework.
+Set up RStudio Cloud Sign up for a free RStudio Cloud account at https://rstudio.cloud/ before the workshop. I recommend logging in with an existing Google or GitHub account, if you have one (rather than creating a new account with another password you have to remember). I want you to be able to work from your own laptop in this workshop, but Cloud is an important back-up plan should you run into troubles.</description>
+    </item>
+    
+    <item>
+      <title>A postcard</title>
+      <link>https://alexmccreight.netlify.app/collection/day01/02-postcards/</link>
+      <pubDate>Sat, 02 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/day01/02-postcards/</guid>
+      <description>Pre-requisites First, make sure you have the latest version of the postcards package installed from CRAN:
+install.packages(&amp;#34;postcards&amp;#34;) Restart your R session. If you use RStudio, use the menu item Session &amp;gt; Restart R or the associated keyboard shortcut:
+Ctrl + Shift + F10 (Windows and Linux) or Command + Shift + F10 (Mac OS). packageVersion(&amp;#34;postcards&amp;#34;) [1] ‘0.2.0’ Create GitHub repo Online.
+Clone GitHub repo usethis::create_from_github(&amp;#34;https://github.com/apreshill/global-postcard.git&amp;#34;) ✨ Commit &amp;amp; Push! ✨</description>
+    </item>
+    
+    <item>
+      <title>Using blogdown</title>
+      <link>https://alexmccreight.netlify.app/collection/day02/02-blogdown/</link>
+      <pubDate>Fri, 01 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/day02/02-blogdown/</guid>
+      <description>Pre-requisites First, make sure you have the latest version of the blogdown package installed from CRAN:
+install.packages(&amp;#34;blogdoown&amp;#34;) Restart your R session. If you use RStudio, use the menu item Session &amp;gt; Restart R or the associated keyboard shortcut:
+Ctrl + Shift + F10 (Windows and Linux) or Command + Shift + F10 (Mac OS). packageVersion(&amp;#34;blogdown&amp;#34;) [1] ‘1.0’ Create GitHub repo Online.
+Clone GitHub repo usethis::create_from_github(&amp;#34;https://github.com/apreshill/global-blogdown.git&amp;#34;) ✨ Commit &amp;amp; Push! ✨</description>
+    </item>
+    
+    <item>
+      <title>A distill site</title>
+      <link>https://alexmccreight.netlify.app/collection/day01/03-distill/</link>
+      <pubDate>Sat, 02 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/day01/03-distill/</guid>
+      <description>Pre-requisites First, make sure you have the latest version of the distill package installed from CRAN:
+install.packages(&amp;quot;distill&amp;quot;) Restart your R session. If you use RStudio, use the menu item Session &amp;gt; Restart R or the associated keyboard shortcut:
+Ctrl + Shift + F10 (Windows and Linux) or Command + Shift + F10 (Mac OS). &amp;lt;!-- --&amp;gt; packageVersion(&amp;quot;distill&amp;quot;) [1] ‘1.2’ Create GitHub repo Online.
+Clone GitHub repo usethis::create_from_github(&amp;quot;https://github.com/apreshill/global-distill.git&amp;quot;) ✨ Commit &amp;amp; Push!</description>
+    </item>
+    
+    <item>
+      <title>Warm woolen mittens</title>
+      <link>https://alexmccreight.netlify.app/collection/day02/03-blogdown/</link>
+      <pubDate>Sat, 02 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/collection/day02/03-blogdown/</guid>
+      <description> Hi, I&#39;m the here-bot cat! Use me to find your way in your website.
+Here I am: content/collection/day02/03-blogdown/index.md To remove me, delete this line inside that file: {{&amp;lt; here &amp;gt;}}
+My content section is: collection My layout is: single-series part 2! does this work? now for some very cool things more get ready! </description>
+    </item>
+    
+    <item>
+      <title>What casues Chronic Kidney Disease of Unknown Etiology?</title>
+      <link>https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/</link>
+      <pubDate>Tue, 19 Jul 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/blog/2022-7-19-ckdu/</guid>
+      <description>Introduction This summer, I worked with Dr. Brianna Heggeseth and fellow Macalester student, Connie Zhang, researching Chronic Kidney Disease of Uncertain Etiology (CKDu) in Nicaragua. This work is in collaboration with Dr. Ben Caplin from the Department of Renal Medicine, University College London, London, UK and Dr. Marvin Gonzalez-Quiroz from the Research Centre on Health, Work and Environment, National Autonomous University of Nicaragua, León (UNAN-Leon), León, Nicaragua.
+Chronic Kidney Disease of Uncertain Etiology Chronic Kidney Disease (CKD) most commonly affects people ages 65 and older, which make up 38% of cases (&amp;ldquo;Chronic Kidney Disease in the United States&amp;rdquo; 2021.</description>
+    </item>
+    
+    <item>
+      <title>Exploring Washington D.C. Bikeshare Ridership Behavior</title>
+      <link>https://alexmccreight.netlify.app/project/2022-05-06-dcridership/</link>
+      <pubDate>Fri, 06 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-05-06-dcridership/</guid>
+      <description>Abstract The increasing popularity of bike sharing solves the last-mile problem for the commuters in cities by deploying bike sharing stations at bus stops, metro stations, and libraries. Increasing gas prices, maintenance costs, and traffic jams are obstacles for commuters that travel by car. Bike sharing services are a cost-effective and eco-friendly alternative. This paper will discuss the influence and efficiency of the bike sharing system in DC by evaluating Capital Bikeshare stations&amp;rsquo; popularity with a longitudinal approach in 2021.</description>
+    </item>
+    
+    <item>
+      <title>Analyzing Boston Home Values</title>
+      <link>https://alexmccreight.netlify.app/project/2022-04-25-housingprices/</link>
+      <pubDate>Mon, 25 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-04-25-housingprices/</guid>
+      <description>Data Context We chose to use Boston housing data from the ‘mlbench’ library for our research project. The data set contains 506 cases and 14 variables. Each case represents a census tract of Boston from the 1970 census. The variables include per capita crime rate, nitric oxide concentration, the average number of rooms per place of residence, the pupil-teacher ratio by census tract, the median value of homes, and more.</description>
+    </item>
+    
+    <item>
+      <title>The Effects of Race, Age, and Income on Home Values: Using Spatial Analysis to Evaluate Ramsey County Homes</title>
+      <link>https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/</link>
+      <pubDate>Fri, 22 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-04-22-spatialcensustract/</guid>
+      <description>Data Context and Research Question Ramsey County is the most densely populated county in Minnesota. Historically, Minnesota has been welcoming to immigrants, but when the anti-blackness movement was rampant in the US, African-American residents of the Twin Cities were also subject to this discrimination.
+During the first few decades of the twentieth century, members of real estate groups in Hennepin and Ramsey County implemented covenants into many housing deeds. These covenants were just a few lines of text in a housing deed that said only people of the &amp;ldquo;Caucasian race&amp;rdquo; could rent, lease, or sell various properties throughout the counties (University of Minnesota, n.</description>
+    </item>
+    
+    <item>
+      <title>The Effects of Education on Processing Speed: A Longitudinal Analysis of the ACTIVE Study</title>
+      <link>https://alexmccreight.netlify.app/project/2022-03-27-activestudy/</link>
+      <pubDate>Sun, 27 Mar 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2022-03-27-activestudy/</guid>
+      <description>Introduction to the ACTIVE Study The decline in cognitive ability common among older adults is known to lead to a decline in the performance of everyday activities and functional independence. Although there is evidence that cognitive skill training can improve cognitive function in older adults, there was no research that indicated that cognitive training results in improvements that persist into later adulthood–this is where the ACTIVE study stepped in. Starting in 1996, the ACTIVE (Advanced Cognitive Training for Independent and Vital Elderly) trial sought to evaluate whether specific training exercises for cognitive skills such as memory, reasoning, and speed of processing could improve &amp;ldquo;real-world functional outcomes in later adulthood&amp;rdquo; (Tennstedt and Unverzagt 2013.</description>
+    </item>
+    
+    <item>
+      <title>What Makes a Movie Popular?</title>
+      <link>https://alexmccreight.netlify.app/project/2021-12-17-bayes/</link>
+      <pubDate>Fri, 17 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/project/2021-12-17-bayes/</guid>
+      <description>Introduction Motivation and Research Question Movies are one of the most important cultural products with increasing demand (Lee and Chang, 2009). Beyond entertainment, movies also take the form of serious art with profound social and philosophical reflections. Demand for specific movies is often hard to predict despite overall increasing demand. To understand how the movie industry operates and the specific factors that impact consumer preference for movies, we decided to analyze the US box office dataset and study what factors are most related to box office performance from the industry&amp;rsquo;s perspective.</description>
+    </item>
+    
+    <item>
+      <title>A campfire</title>
+      <link>https://alexmccreight.netlify.app/talk/campfire/</link>
+      <pubDate>Tue, 12 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/talk/campfire/</guid>
+      <description>I&amp;rsquo;m really excited to give this talk! Stay tuned for video and slides.</description>
+    </item>
+    
+    <item>
+      <title>A seedling</title>
+      <link>https://alexmccreight.netlify.app/talk/second-seedling/</link>
+      <pubDate>Fri, 01 Jan 2021 14:15:59 -0600</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/talk/second-seedling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>A seedling</title>
+      <link>https://alexmccreight.netlify.app/talk/seedling/</link>
+      <pubDate>Mon, 13 Jan 2020 14:15:59 -0600</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/talk/seedling/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Built-in Contact Form</title>
+      <link>https://alexmccreight.netlify.app/blog/built-in-contact-form/</link>
+      <pubDate>Mon, 01 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/blog/built-in-contact-form/</guid>
+      <description>Formspree makes it easy to receive submissions from HTML forms on your static website. Functional Form This theme has a form-to-email feature built in, thanks to the simple Formspree integration. All you need to activate the form is a valid recipient email address saved in the front matter of the form (/content/forms/contact.md). Of course, the example shown below (your@email.here) must not be used. Please use your actual email address.</description>
+    </item>
+    
+    <item>
+      <title>Contact</title>
+      <link>https://alexmccreight.netlify.app/contact/</link>
+      <pubDate>Mon, 25 Feb 2019 13:38:41 -0600</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/contact/</guid>
+      <description>** Contact page don&amp;rsquo;t contain a body, just the front matter above. See form.html in the layouts folder.
+Formspree requires a (free) account and new form to be set up. The link is made on the final published url in the field: Restrict to Domain. It is possible to register up to 2 emails free and you can select which one you want the forms to go to within Formspree in the Settings tab.</description>
+    </item>
+    
+    <item>
+      <title>Typography Styles &amp; Element Examples</title>
+      <link>https://alexmccreight.netlify.app/elements/</link>
+      <pubDate>Mon, 18 Feb 2019 12:27:33 -0600</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/elements/</guid>
+      <description>Font Sizes A A A A A A A A 6rem
+(96px) 5rem
+(80px) 3rem
+(48px) 2.25rem
+(36px) 1.5rem
+(24px) 1.25rem
+(20px) 1rem
+(16px) .875rem
+(14px) Type Samples Head&amp;shy;line Sub&amp;shy;head&amp;shy;line Level 1 Heading One page to rule them all...well, not really. This page displays sample typography and page elements to illustrate their style. Things like headings and paragraphs showing the beautiful type scale, form elements, tabular data, and image layouts just to name a few.</description>
+    </item>
+    
+    <item>
+      <title>Contributors</title>
+      <link>https://alexmccreight.netlify.app/contributors/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/contributors/</guid>
+      <description>Thank you to all the folks who have contributed both technical and creative skills to this project:
+Desirée De Leon 🦒 (designed 5 of the custom color themes, made illustrations for the workshop, and provided general aesthetic feedback along the way)
+Garrick Aden-Buie 🧙‍♀️ (debugged headroom.js and lent his panelset.js code to the theme)
+Allison Horst 🐕 (awesome illustrations of campfires, seedlings, and evergreens, as well as my R Markdown hedgehog mascot 🦔)</description>
+    </item>
+    
+    <item>
+      <title>License</title>
+      <link>https://alexmccreight.netlify.app/license/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://alexmccreight.netlify.app/license/</guid>
+      <description>My blog posts are released under a Creative Commons Attribution-ShareAlike 4.0 International License.</description>
+    </item>
+    
+  </channel>
+</rss>

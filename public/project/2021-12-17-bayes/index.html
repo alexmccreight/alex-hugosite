@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head>
+  
+                           
+     
+
+
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.101.0" />
+<title>What Makes a Movie Popular? | Alex McCreight</title>
+
+
+<meta property="twitter:site" content="@apmccreight">
+<meta property="twitter:creator" content="@apmccreight">
+
+
+
+
+
+
+
+  
+    
+  
+<meta name="description" content="Analyzing Domestic Box Office Revenue using Bayesian Regression and Bayesian Network Analysis">
+
+
+<meta property="og:site_name" content="Alex McCreight">
+<meta property="og:title" content="What Makes a Movie Popular? | Alex McCreight">
+<meta property="og:description" content="Analyzing Domestic Box Office Revenue using Bayesian Regression and Bayesian Network Analysis" />
+<meta property="og:type" content="page" />
+<meta property="og:url" content="https://alexmccreight.netlify.app/project/2021-12-17-bayes/" />
+<meta property="og:locale" content="en">
+
+
+
+
+    
+        <meta property="og:image" content="https://alexmccreight.netlify.app/project/2021-12-17-bayes/featured.jpg" >
+        <meta property="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="https://alexmccreight.netlify.app/project/2021-12-17-bayes/featured.jpg" >
+    
+    
+  <meta itemprop="name" content="What Makes a Movie Popular?">
+<meta itemprop="description" content="Introduction Motivation and Research Question Movies are one of the most important cultural products with increasing demand (Lee and Chang, 2009). Beyond entertainment, movies also take the form of serious art with profound social and philosophical reflections. Demand for specific movies is often hard to predict despite overall increasing demand. To understand how the movie industry operates and the specific factors that impact consumer preference for movies, we decided to analyze the US box office dataset and study what factors are most related to box office performance from the industry&rsquo;s perspective."><meta itemprop="datePublished" content="2021-12-17T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2021-12-17T00:00:00+00:00" />
+<meta itemprop="wordCount" content="5607"><meta itemprop="image" content="https://alexmccreight.netlify.app/project/2021-12-17-bayes/featured.jpg">
+<meta itemprop="keywords" content="" />
+  
+  
+  <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/img/favicon.ico" type="image/x-icon">
+  
+  
+  <link rel="stylesheet" href="/style.main.min.508aa34bb4fa7ebfddd6892a4ec251e1ce46ad0e0c5be6380abc84336f01b14e.css" integrity="sha256-UIqjS7T6fr/d1okqTsJR4c5GrQ4MW&#43;Y4CryEM28BsU4=" media="screen">
+  
+  
+  <script src="/panelset.min.dca42702d7daf6fd31dc352efd2bcf0e4ac8c05ccaa58d9293f6177462de5d5f.js" type="text/javascript"></script>
+  
+  
+  <script src="/main.min.839ccae8d97e12ee64a752d610eca52cfd7cf0dc4fb9fee7d2a5c7a73d3a36ef.js" type="text/javascript"></script>
+</head>
+<body>
+      <div class="grid-container">
+<header class="site-header pt4 pb2 mb4 bb b--transparent ph5 headroom z-max" role="banner">
+  <nav class="site-nav db dt-l w-100" role="navigation">
+    <a class="site-brand db dtc-l v-mid link no-underline w-100 w-33-l tc tl-l" href="https://alexmccreight.netlify.app" title="Home">
+      <img src="/img/blogophonic-mark-dark.png" class="dib db-l h2 w-auto" alt="Alex McCreight">
+    </a>
+    <div class="site-links db dtc-l v-mid w-100 w-47-l tc tr-l mt3 mt0-l ttu tracked">
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/about/" title="About Alex McCreight">About Me</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/blog/" title="Research">Research</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 active" href="/project/" title="Project Portfolio">Projects</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/talk/" title="Talks">Talks</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/collection/" title="A collection">A collection</a>
+      
+        
+        
+        
+      <a class="link f6 f5-l dib pv1 ph2 " href="/elements/" title="Element Page">Elements</a>
+      
+      
+    </div>
+  </nav>
+</header>
+
+<main class="page-main pa4" role="main">
+  <section class="page-content mw7 center">
+    <article class="post-content pa0 ph4-l">
+      <header class="post-header">
+        <h1 class="f1 lh-solid measure-narrow mb3 fw4">What Makes a Movie Popular?</h1>
+        
+        <p class="f6 measure lh-copy mv1">By Alex McCreight, Geven Liu, Zixuan Zheng</p>
+        <p class="f7 db mv0 ttu">December 17, 2021</p>
+
+      
+
+      </header>
+      <section class="post-body pt5 pb4">
+        
+
+
+
+<h1 id="introduction">Introduction
+  <a href="#introduction"></a>
+</h1>
+
+
+
+
+<h2 id="motivation-and-research-question">Motivation and Research Question
+  <a href="#motivation-and-research-question"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>Movies are one of the most important cultural products with increasing demand (Lee and Chang, 2009). Beyond entertainment, movies also take the form of serious art with profound social and philosophical reflections. Demand for specific movies is often hard to predict despite overall increasing demand. To understand how the movie industry operates and the specific factors that impact consumer preference for movies, we decided to analyze the US box office dataset and study what factors are most related to box office performance from the industry&rsquo;s perspective.</p>
+
+
+
+
+<h2 id="data">Data
+  <a href="#data"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+
+
+
+
+<h3 id="data-source">Data Source
+  <a href="#data-source"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h3>
+<p>Our group is using the boxofficemojo dataset from Kaggle. The dataset contains movie data from the US box office from January 1990 to April 2020. The author, Igor Kirko, scraped movies from the boxofficemojo website that had a budget listed, a US MPAA rating, and is available in English.</p>
+
+
+
+
+<h3 id="data-scraping--cleaning">Data Scraping &amp; Cleaning
+  <a href="#data-scraping--cleaning"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h3>
+<p>In our initial assessment of the data, we knew that we would need more variables for our analysis. We specifically were looking for data about the movie&rsquo;s rating by the community to see if it affected its box office revenue. In 2008, Amazon purchased boxofficemojo through its subsidiary IMDB, so the two databases share the same movie codes. This allows us to utilize rating data from the IMDB website and join it with the boxofficemojo dataset.</p>
+<p>To clean our dataset, we dropped all variables that would have little to no effect on box office revenue (e.g., the movie&rsquo;s cinematographer, composer, and run time). We also created indicator variables such as &ldquo;HolidaySeason&rdquo; to determine whether or not a movie was released during what we defined as the holiday season, and &ldquo;director_power,&rdquo; which finds out whether a movie&rsquo;s director is in the top 100 grossing directors for the worldwide box office. In total, we have 2821 movies in our dataset.</p>
+<p>More details about our variables can be found in the code book section of the appendix.</p>
+
+
+
+
+<h3 id="data-visualizations">Data Visualizations
+  <a href="#data-visualizations"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h3>
+<p><strong>Dependent Variable</strong></p>
+<p>Our analysis uses <em>domestic</em> (total domestic box office revenue in millions) from our dataset as our dependent variable, which indicates a movie&rsquo;s success.</p>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/data-viz-1-1.png" width="672" />
+<p>After evaluating the distribution of domestic box office revenue, we found that most movies generate around 70 million USD. However, the domestic box office revenue range varies from 1.228 million USD to 936.662 million USD, and the distribution is heavily right-skewed, so we decided to use the log-scale to normalize our curve.</p>
+<p>We can see from the graph that the logged domestic box office revenue has a relatively normal distribution, centered around 3.75, which is roughly 42.5 million USD or <code>\(e^{3.75}\)</code>.</p>
+<p><strong>Quantitative Variables</strong></p>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/data-viz-2-1.png" width="672" />
+<p>Our dataset has three quantitative variables: <em>budget</em>, <em>number of votes</em>, and <em>average rating</em>. We wanted to view their relationships with domestic box office revenue to see whether or not they affect it. To improve our visualization, we decided to use the logged budget and the logged number of votes of a movie to decrease the variability in these variables.</p>
+<p>For our first two plots, we have a positive trend between logged budget and logged domestic box office revenue and between the logged number of votes of a movie and the logged domestic box office revenue. This means that as the logged budget or the logged number of votes increases, the logged domestic box office revenue will also increase. Our third plot does not show a clear relationship between the average rating of a movie and the logged domestic box office revenue.</p>
+<p><strong>Categorical Variables</strong></p>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/data-viz-3-1.png" width="672" />
+<p>Our dataset has four indicator variables: <em>director power</em>, <em>producer power</em>, <em>distributor power</em>, and <em>holiday season</em>. We wanted to view their relationship with domestic box office revenue to see whether or not they affect it. To improve our visualization, we chose to use the logged domestic box office revenue to eliminate many of the outliers.</p>
+<p>From the graphs, we can see that the four variables do not significantly impact domestic box office revenue. The variability of all the graphs is roughly the same.</p>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/data-viz-4-1.png" width="672" />
+<p>We have two categorical variables in our dataset with greater than two categories: <em>actor power</em> (0, 1, 2, 3, 4) and <em>MPAA rating</em> (NA, G, PG, PG-13, R, NC-17). We wanted to view their relationship with domestic box office revenue to see whether or not they affect it. To improve our visualization, we chose to use the logged domestic box office revenue to eliminate many of the outliers.</p>
+<p>The graphs show that casting more actors or movies with a G MPAA rating tends to have a higher domestic box office revenue.</p>
+<p><br>
+<br>
+<br>
+\</p>
+
+
+
+
+<h1 id="bayesian-normal-regression-approach">Bayesian Normal Regression Approach
+  <a href="#bayesian-normal-regression-approach"></a>
+</h1>
+
+
+
+
+<h2 id="why-this-approach">Why This Approach?
+  <a href="#why-this-approach"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<ul>
+<li>
+<p>Our dependent variable is quantitative and bell-shaped</p>
+</li>
+<li>
+<p>Incorporate our prior knowledge into our model</p>
+</li>
+</ul>
+
+
+
+
+<h2 id="goals">Goals
+  <a href="#goals"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>We are going to create two Bayesian Normal regression models to try and predict the logged domestic box office revenue. For our first model, we hope to create a model that accurately predicts the logged domestic box office revenue solely with the logged budget. For the second model, we added the variables from the data visualization section above that we believe will affect the logged domestic box office revenue.</p>
+
+
+
+
+<h2 id="model-1">Model 1
+  <a href="#model-1"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>For our first model, we will examine the relationship between the logged budget of a movie and its logged domestic box office revenue. Intuitively, we think the budget will play an essential role in the success of a movie.</p>
+<p><strong>Building the Model</strong></p>
+<p>To model response variable Y, the logged domestic box revenue, by predictor X, the logged budget, we collected data from 2821 movies. Let <code>\((Y_i, X_i)\)</code> denote the observed data on each movie <code>\(i \in \{1, 2, ..., 2821\}\)</code>.</p>
+<p><code>$$\begin{gather} Y_i| \beta_0,  \beta_1,\sigma\sim N(\mu_i, \sigma^2) \text{   where   } \mu_i = \beta_0+\beta_1X_i\\ \beta_{0c} \sim N(m_0, s_0^2)\\ \beta_1 \sim N(m_1, s_1^2)\\ \sigma \sim Exp(l) \end{gather}$$</code></p>
+<ul>
+<li><code>\(\sigma\)</code> measures the typical deviation of an observed Y from the regression line <code>\(\beta_0+\beta_1X_1\)</code>.</li>
+</ul>
+<p><strong>Prior Analysis</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>model_1_prior <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">stan_glm</span>(
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">log</span>(domestic) <span style="color:#000;font-weight:bold">~</span> <span style="color:#900;font-weight:bold">log</span>(budget),
+</span></span><span style="display:flex;"><span>  data <span style="color:#000;font-weight:bold">=</span> imdb_movies,
+</span></span><span style="display:flex;"><span>  family <span style="color:#000;font-weight:bold">=</span> gaussian,
+</span></span><span style="display:flex;"><span>  prior_PD <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">TRUE</span>,
+</span></span><span style="display:flex;"><span>  chains <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">4</span>, iter <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">5000</span><span style="color:#000;font-weight:bold">*</span><span style="color:#099">2</span>, seed <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">84735</span>,
+</span></span><span style="display:flex;"><span>  refresh <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>)
+</span></span></code></pre></div><img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/mod1-prior-eval-1.png" width="672" />
+<p>The slopes of the prior plausible regression lines are both positive and negative, and the intercepts are quite varied. The priors that we have are uninformative.</p>
+<p><strong>Posterior Analysis</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>model_1 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">stan_glm</span>(
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">log</span>(domestic) <span style="color:#000;font-weight:bold">~</span> <span style="color:#900;font-weight:bold">log</span>(budget),
+</span></span><span style="display:flex;"><span>  data <span style="color:#000;font-weight:bold">=</span> imdb_movies,
+</span></span><span style="display:flex;"><span>  family <span style="color:#000;font-weight:bold">=</span> gaussian,
+</span></span><span style="display:flex;"><span>  chains <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">4</span>, iter <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">5000</span><span style="color:#000;font-weight:bold">*</span><span style="color:#099">2</span>, seed <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">84735</span>,
+</span></span><span style="display:flex;"><span>  refresh <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>)
+</span></span></code></pre></div><img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/mod1-eval-1.png" width="672" />
+<p>The model accurately captures the shape and the range of the data. Also, there is much more certainty when looking at our plausible regression lines, as all of the slopes and intercepts are roughly the same.</p>
+
+
+
+
+<h2 id="model-2">Model 2
+  <a href="#model-2"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>For our second model, we are going to examine the relationship between the logged budget of a movie, the distributor&rsquo;s power, the director&rsquo;s power, the producer&rsquo;s power, the logged average rating of a movie, the logged number of votes for a movie, the sum of the actor&rsquo;s power, whether or not the movie was released during the holiday season, the movie&rsquo;s MPAA rating, and the logged domestic box office revenue.</p>
+<p><strong>Building the Model</strong></p>
+<p>To model response variable <code>\(Y\)</code>, the logged domestic box revenue, by predictor <code>\(X_1\)</code>, the logged budget, <code>\(X_2\)</code>, distributor_powerTRUE, <code>\(X_3\)</code>, director_powerTRUE, <code>\(X_4\)</code>, the logged average rating, <code>\(X_5\)</code>, the logged number of votes, <code>\(X_6\)</code>, A_power1, <code>\(X_7\)</code>, A_power2, <code>\(X_8\)</code>, A_power3, <code>\(X_9\)</code>, A_power4, <code>\(X_{10}\)</code>, HolidaySeasonTRUE, <code>\(X_{11}\)</code>, mpaa_factorNA, <code>\(X_{12}\)</code>, mpaa_factorNC-17, <code>\(X_{13}\)</code>, mpaa_factorPG, <code>\(X_{14}\)</code>, mpaa_factorPG-13, <code>\(X_{15}\)</code>, mpaa_factorR, <code>\(X_{16}\)</code>, producer_powerTRUE, we collected data from 2821 movies. Let <code>\((Y_i, X_{ip})\)</code> denote the observed data on each movie <code>\(i \in \{1, 2, ..., 2821\}\)</code> for each predictor <code>\(p \in \{1, 2, ..., 16\}\)</code>.</p>
+<p><code>$$\begin{gather} Y_i| \beta_0,  \beta_1,\beta_2, ...,\beta_{16},\sigma\sim N(\mu_i, \sigma^2) \text{   where   } \mu_i = \beta_0+\beta_1X_{i1}+\beta_2X_{i2}+...+\beta_{16}X_{i16}\\ \beta_{0c} \sim N(m_0, s_0^2)\\ \beta_1 \sim N(m_1, s_1^2)\\ \beta_2 \sim N(m_2, s_2^2)\\ \vdots\\ \beta_{16} \sim N(m_{16}, s_{16}^2)\\ \sigma \sim Exp(l) \end{gather}$$</code></p>
+<ul>
+<li>
+<p><code>\(\sigma\)</code> measures the typical deviation of an observed Y from the regression line <code>\(\beta_0+\beta_1X_1\)</code>.</p>
+</li>
+<li>
+<p>We interpret <code>\(\beta_0\)</code>, -2.194 (which equates to roughly 54,258 USD), as the estimated logged domestic box office revenue when a movie has a logged budget of 0, does not have a top 10 distributor, does not have a top 100 grossing director, does not have a top 100 grossing producer, has a logged average rating of 0, has no logged votes, has no actors with a previous box office movie, was released outside of the holiday season, and is rated G.
+<strong>Prior Analysis</strong></p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>model_2_prior <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">stan_glm</span>(
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">log</span>(domestic) <span style="color:#000;font-weight:bold">~</span> <span style="color:#900;font-weight:bold">log</span>(budget) <span style="color:#000;font-weight:bold">+</span> distributor_power <span style="color:#000;font-weight:bold">+</span> director_power <span style="color:#000;font-weight:bold">+</span> <span style="color:#900;font-weight:bold">log</span>(averageRating) <span style="color:#000;font-weight:bold">+</span> <span style="color:#900;font-weight:bold">log</span>(numVotes) <span style="color:#000;font-weight:bold">+</span> A_power <span style="color:#000;font-weight:bold">+</span> HolidaySeason <span style="color:#000;font-weight:bold">+</span> mpaa_factor <span style="color:#000;font-weight:bold">+</span> producer_power, 
+</span></span><span style="display:flex;"><span>  data <span style="color:#000;font-weight:bold">=</span> imdb_movies,
+</span></span><span style="display:flex;"><span>  family <span style="color:#000;font-weight:bold">=</span> gaussian,
+</span></span><span style="display:flex;"><span>  prior_PD <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">TRUE</span>,
+</span></span><span style="display:flex;"><span>  chains <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">4</span>, iter <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">5000</span><span style="color:#000;font-weight:bold">*</span><span style="color:#099">2</span>, seed <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">84735</span>,
+</span></span><span style="display:flex;"><span>  refresh <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>)
+</span></span></code></pre></div><img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/mod2-prior-eval-1.png" width="672" />
+<p>From the graph, we can see the the prior predictive check has a much wider range than the data, and it fails to capture the shape of the data. Thus the priors are vague.</p>
+<p><strong>Posterior Analysis</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>model_2 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">stan_glm</span>(
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">log</span>(domestic) <span style="color:#000;font-weight:bold">~</span> <span style="color:#900;font-weight:bold">log</span>(budget) <span style="color:#000;font-weight:bold">+</span> distributor_power <span style="color:#000;font-weight:bold">+</span> director_power <span style="color:#000;font-weight:bold">+</span> producer_power <span style="color:#000;font-weight:bold">+</span> <span style="color:#900;font-weight:bold">log</span>(averageRating) <span style="color:#000;font-weight:bold">+</span> <span style="color:#900;font-weight:bold">log</span>(numVotes) <span style="color:#000;font-weight:bold">+</span> A_power <span style="color:#000;font-weight:bold">+</span> HolidaySeason <span style="color:#000;font-weight:bold">+</span> mpaa_factor, 
+</span></span><span style="display:flex;"><span>  data <span style="color:#000;font-weight:bold">=</span> imdb_movies,
+</span></span><span style="display:flex;"><span>  family <span style="color:#000;font-weight:bold">=</span> gaussian,
+</span></span><span style="display:flex;"><span>  chains <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">4</span>, iter <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">5000</span><span style="color:#000;font-weight:bold">*</span><span style="color:#099">2</span>, seed <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">84735</span>,
+</span></span><span style="display:flex;"><span>  refresh <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>)
+</span></span></code></pre></div><p><img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/mod2-eval-1.png" width="672" /><img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/mod2-eval-2.png" width="672" /></p>
+<p>The posterior predictive check accurately captures the normality and the observed range of the logged domestic box office revenue while the density chain overlay plots produce similar output.</p>
+
+
+
+
+<h2 id="model-comparison">Model Comparison
+  <a href="#model-comparison"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>Now, we are going to compare these two models by using expected log-predictive density (ELPD), which measures the average log posterior predictive pdf, <code>\(log(f(y_{new}|\vec{y}))\)</code>, across all possible new data points <code>\(y_{new}\)</code> (Johnson, Ott, Dogucu).</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>loo_model_1 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">loo</span>(model_1)
+</span></span><span style="display:flex;"><span>loo_model_2 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">loo</span>(model_2)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">c</span>(loo_model_1<span style="color:#000;font-weight:bold">$</span>estimates[1], loo_model_2<span style="color:#000;font-weight:bold">$</span>estimates[1])
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">loo_compare</span>(loo_model_1, loo_model_2)
+</span></span></code></pre></div><p>The posterior predictive accuracy of model 2 is significantly greater than that of model 1 as the ELPD of model 2, -3174.781, is greater than the ELPD of model 1, -3959.588, and because the difference in the ELPD model 2 and the ELPD of model is at least two standard errors below 0.</p>
+<p><br>
+<br>
+\</p>
+
+
+
+
+<h1 id="bayesian-network-approach">Bayesian Network Approach
+  <a href="#bayesian-network-approach"></a>
+</h1>
+
+
+
+
+<h2 id="introduction-1">Introduction
+  <a href="#introduction-1"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>In our Bayesian normal regression, our task was to predict the box office of any given movie. However, regression tasks cannot be used to draw any causal inference, nor are we informed on the interaction or inter-relations between the variables. In our data context, the causal relationships among different variables are intricate and complicated - director power, actor power, budget, and other factors could impact each other, and we do not know if the box office is directly or indirectly determined by just a subset of the variables or all of them. We moved beyond regression to graphical probabilistic tools such as Bayesian belief networks to gain more such information.</p>
+<p><strong>What are Bayesian Networks?</strong></p>
+<p>Bayesian networks are graphical models (Korb and Nicholson 2004)</p>
+<ul>
+<li>
+<p>nodes represent random variables</p>
+</li>
+<li>
+<p>arrows represent probabilistic dependencies between them</p>
+</li>
+</ul>
+<p>The graphic structure <code>\(\mathbb{G}=(\mathbb{V}, A)\)</code> of a Bayesian network is a directed acyclic graph (DAG), where <code>\(V\)</code> is the node set and A is the arc set.</p>
+<p>DAG defines a factorization of the joint probability distribution, this is the notation for discrete random variables.</p>
+<p><code>\(P(X_1, ..., X_v) = \prod^{v}_{i=1}P(X_i |Π_{X_i})\)</code></p>
+<hr>
+<p><em>A detailed explanation of Bayesian Network</em></p>
+<p>Bayesian Belief Network(BBN) is a graphical probabilistic model that specializes in deriving inferences on the causal relationships between different variables. BBN is a natural advancement of the Naive Bayes classifier, which assumes that all variables are independent. In reality, this is often not a fair assumption to make, as the variables are oftentimes correlated. However, it is also likely intractable to obtain exact causal inference of every possible pair of variables. BBN’s advantage is that it builds upon a computationally more efficient directed acyclic graph for modeling networks of causality, thus achieving higher predictive accuracy and more sensible interpretation of relationships between variables.</p>
+<p>A BBN graph consists of two central elements: nodes and arcs. Each node represents a random variable, and each directed arc represents causality. Absence of arc represents (conditional) independence. An example of a BBN graph is given below.</p>
+<p>Of all variables, bad weather and a bad headache do not have any parent nodes, and are thus independent from each other. Other variables are all somewhat related and dependent, and it would be wrong to use a Naive Bayes classifier to determine if one would fail the exam by all other variables. One key concept to BBN is conditional independence: each note is conditionally independent of its non-immediate descendents. For example, typically, if you have slept over the alarm clock, you are likely to miss and thus fail the exam. However, given certain information that you have arrived at school on time, sleeping over the alarm doesn’t necessarily have anything to do with whether you would fail the exam. This in general provides a much more sensible interpretation of variable relationships than arbitrarily determining that all variables potentially equally contribute to the outcome.</p>
+<p>Usually, on a given matter, we can rely on expertise or prior knowledge to design the BBN model architecture, which could be both advantageous and disadvantageous depending on dimensionality. While BBN is generally good in modeling causality, the model cannot depict cyclic or mutual relationships, which might still be problematic in some settings. For example, if failing the exam might bring you a headache and we draw a causal arc from failing the exam back to a bad headache, then BBN would crash as there’s a Headache-&gt;SleepOverAlarm-&gt;FailTheExam-&gt;Headache cyclic graph. In our data context of determining movie success, this actually could be one of the concerns: oftentimes, the producer/director/actor success and movie success are much correlated with mutual causality: good directors could make great movies with good box office; or people see a movie and thus make the actors/directors rank higher.</p>
+<p><img src="Bayes_project.png" alt=""></p>
+<hr>
+<p><strong>Why we chose this approach?</strong></p>
+<ul>
+<li>
+<p>Easily reflect domain knowledge and can simply notice cause and effect (Antal, Fannes, Timmerman, Moreau, &amp; De Moor, 2004; Aronsky &amp; Haug, 2000)</p>
+</li>
+<li>
+<p>Look at interdependencies (patterns of connections and effects), which means they do not face problems with over-parameterization in regression (adversely affected by adding extra variables).</p>
+</li>
+<li>
+<p>Good at dealing with missing data. Because networks are based on how variables align with each other, they will use any information that is available</p>
+</li>
+</ul>
+<p><strong>What is the purpose of learning the structure?</strong></p>
+<ul>
+<li>helps in learning the dependency structure relative to variables in a domain</li>
+<li>estimate the statistical model of the underlying distribution</li>
+</ul>
+<hr>
+<p><strong>Bayesian network structure learning algorithms</strong></p>
+<ol>
+<li>Fitting BN models</li>
+</ol>
+<p>Maro Scutari(2020), the author of bnlearn R package, outlined the process of fitting a bayesian network into two main steps: 1. Structural learning, which finds the directed acyclic graph that reflects the causality and conditional independence relations in the data; 2. Parameter learning, which estimates parameters of the global distribution. This could be derived from local distributions.</p>
+<ol start="2">
+<li>Structural learning algorithm</li>
+</ol>
+<p>A Bayesian network, <code>\(\mathbb{G}=(\mathbb{V},A)\)</code>, where <code>\(\mathbb{V}\)</code> denotes nodes and <code>\(A\)</code> denotes arcs, can be shaped by expert knowledge or learned by data. There are generally two types of structural learning algorithms: score-based and constraint-based, though many hybrid approaches also use constraint-based learning to determine the approximate graph structure and use score-based algorithms to determine the best model. In this study, we will employ the hill-climbing algorithm, a greedy score-based algorithm.</p>
+<p>2.1 Score-based algorithms</p>
+<p>The underlying mechanism behind score-based algorithms is that they will give a score to each graphical structure to measure the compatibility of the data and the structure(Kuleshov &amp; Ermon). There are many different score measures, but a general formula of score can be written as: <code>$$Score(\mathbb{G},\mathbb{D})=L(\mathbb{G},\mathbb{D})-\psi(|\mathbb{D}|)|\mathbb{G}|$$</code> where <code>\(L(\mathbb{G},\mathbb{D})\)</code> represents the likelihood(often logged) of data, <code>\(|\mathbb{D}|\)</code> represents the data sample size, and <code>\(|\mathbb{G}|\)</code> denotes the number of parameters in the given structure. Overall, <code>\(\psi(|\mathbb{D}|)|\mathbb{G}|\)</code> is a penalty term that penalizes overly complex structures, thus preventing overfitting of the data. One common choice of score is to take the penalty term as <code>\(\frac{|\mathbb{D}|}{2}\ln|\mathbb{G}|\)</code>, which is known as the Bayesian Information Criteria(BIC). A score-based method attempts to find the network structure that maximizes the score or finds the structure most compatible with the data.</p>
+<p>However, to run the score-based approach through all possible structures is computationally infeasible in all but the most trivial data samples. For a potential structure with <code>\(p\)</code> variables, a thorough search of all possible networks requires <code>\(2^{p(p-1)/2}\)</code> calculations (you can draw <code>\(p(p-1)/2\)</code> lines in a network, and two possible directions for each line). To reduce computational expense, a heuristic search is necessary. Hill-climbing (HC) is one of the most popular learning approaches in artificial intelligence, which employs a recursive process that seeks the local optimum at each iteration. In the Bayesian network learning setting, HC starts with a random possible network and tries all modified networks by a single edge change: addition, deletion, or reversal. HC chooses the model with the highest score of all modified networks and then repeats the iterative process unless no modified networks could increase the score. A toy example of one HC iteration is shown below.</p>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<p>Assume we have three predictors. We start with a random initial network shown above, which is characterized by a reverse v-structure(which will be explained later), where A is the parent node of two conditionally independent leaf nodes B and C. To perform one entire HC iteration, we list all possible networks after one edge modification.</p>
+<ul>
+<li>Reversal:</li>
+</ul>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/unnamed-chunk-3-1.png" width="672" />
+<ul>
+<li>Addition:</li>
+</ul>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<ul>
+<li>And deletion:</li>
+</ul>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
+<p>We then record the chosen score for each of the six new modified networks and the original initial state. If any modified network can improve the score, we choose the new network with the best score and start another iteration; if no modification improves the score, we settle for the old network.</p>
+<p>As a heuristic search, HC does not guarantee to find the global best network and only seeks the local optimum. As the initial starting network is random, the resulting network structure might be slightly different each time you run HC function.</p>
+<p>2.2 Constraint-based algorithms</p>
+<p>The constraint-based approach to network learning was established by the seminal work of Verma and Pearl(1991). The algorithm is roughly summarized in three steps:</p>
+<ol>
+<li>
+<p>Learning neighbors. For every possible pairs of nodes <code>\(X_i\)</code> and <code>\(X_j\)</code>($i\neq j$), search for a separating set <code>\(S_{ij}\)</code> such that given <code>\(S_{ij}\)</code>(including <code>\(\emptyset\)</code>), <code>\(X_i\)</code> and <code>\(X_j\)</code> are conditionally independent. If such a set does not exist, an undirected arc is placed between <code>\(X_i\)</code> and <code>\(X_j\)</code>. After this step is done, we check for neighbor symmetry. That is, if <code>\(X_i\)</code> is <code>\(X_j\)</code>&rsquo;s neighbor, then <code>\(X_j\)</code> must also be <code>\(X_i\)</code>&rsquo;s neighbor. If this is not the case, we drop the arc.</p>
+</li>
+<li>
+<p>Examining v-structure. A V-structure is defined by a triplet of nodes, incident on a converging connection, shown in the example below.</p>
+</li>
+</ol>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+<p>For each pair of non-adjacent nodes <code>\(X_i\)</code> and <code>\(X_j\)</code> that has a common neighbor <code>\(X_k\)</code>, if <code>\(X_k\)</code> is in the separating set <code>\(S_{ij}\)</code>, then we set the direction of arcs <code>\(X_i \rightarrow X_k\)</code> and <code>\(X_i \rightarrow X_k\)</code> to obtain a v-structure.</p>
+<ol start="3">
+<li>Completing the DAG. This step calls for a logical deduction of arc direction for those undirected arcs to satisfy the acyclicity requirement. Scutari(2020) outlines the recursive steps: a. If <code>\(X_i\)</code> and <code>\(X_j\)</code> are adjacent, and if there is a strict directed path from <code>\(X_i\)</code> to <code>\(X_j\)</code>, then place <code>\(X_i\rightarrow X_j\)</code>. b. If <code>\(X_i\)</code> and <code>\(X_j\)</code> are not adjacent, but <code>\(X_i\rightarrow X_k\)</code> and there&rsquo;s an undirected arc from <code>\(X_k\)</code> to <code>\(X_j\)</code>, then set <code>\(X_k\rightarrow X_j\)</code>.</li>
+</ol>
+<p>The network learned by constraint-based algorithms may contain some undirected arcs. Central to constraint-based network learning is the concept of conditional independence test and the Markov blanket. <code>\(X_i\)</code> and <code>\(X_j\)</code> are conditionally independent given <code>\(X_k\)</code>, denoted by <code>\(X_i ⊥ X_j | X_k\)</code>, if and only if <code>\(P(X_i,X_j|X_k)=P(X_i|X_k)P(X_j|X_k)\)</code>. The most popular conditional independence tests are mutual information tests (for discrete) and exact Student&rsquo;s t-tests.</p>
+<p>Markov blanket is often used to reduce computational expense. From the summarized outline of constraint-based algorithms, we can see that it is the first step that asks for a search of every possible separating set for every possible pair of nodes that contains most of the computing process. To effectively reduce this process, we often limit our search of separating sets only among the Markov blanket of the two nodes. A Markov blanket of a variable <code>\(X_i\)</code>, <code>\(\mathbb{B}(X_i)\)</code>, refers to the subset of variables in <code>\(\mathbb{V}\)</code> that graphically separates <code>\(X_i\)</code> from any other nodes, or in notation, <code>\(X_i ⊥ \mathbb{V}\backslash\{X_i,\mathbb{B}(X_i)\} | \mathbb{B}(X_i)\)</code>. In Bayesian network specifically, the Markov blanket is identified by the parents, children, and spouses. In the example graph below, for node E, the Markov blanket contains: its parents, B and C; its children or immediate descendants, G; and its spouse, F, with whom it shares a common children node, G. A and D are part of the Markov blanket of E. Markov blankets could greatly improve the efficiency of the algorithms as not all variables are entirely relevant in making statistical inferences.</p>
+<img src="https://alexmccreight.netlify.app/project/2021-12-17-bayes/index_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<hr>
+<p><br>
+<br>
+<br>
+\</p>
+
+
+
+
+<h2 id="analysis">Analysis
+  <a href="#analysis"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>Because Bayesian network works best with discrete data, we categorize our quantitative continuous variables into 3 categories by using quantile.
+Data wrangling process will be shown in the appendix.</p>
+<p>We have 11 categorical variables in total</p>
+<ul>
+<li>
+<p>5 of them are Boolean variables(HolidaySeason/producer_power/director_power/distributor_power/genre_power)</p>
+</li>
+<li>
+<p>3 of them with 3 levels which are High, Medium and Low.(domestic_cut/budget_cut/numVotes_cut)</p>
+</li>
+<li>
+<p>A_power has 5 categories(0/1/2/3/4) where representing how many influential artists appeared in the main cast of 4</p>
+</li>
+<li>
+<p>mpaa has 6 categories(1/2/3/4/5/NA) which includes (insert here)</p>
+</li>
+<li>
+<p>averageRating_round has total 7 levels coresponding with the rounded rating score</p>
+</li>
+</ul>
+<p><strong>Incorporating prior knowledge</strong></p>
+<p>Following Lee and Chang(2009), we incorporate our prior knowledge of the system under study into the model selection process. The prior knowledge is shown in the graph below with certain modifications.</p>
+<p><img src="p_2.png" alt="">
+From Lee and Chang(2009)</p>
+<p>We will split our 11 categorical variables into four blocks:</p>
+<ul>
+<li>
+<p>Box-office performance(domestic_cut)</p>
+</li>
+<li>
+<p>Production(mpaa/budget_cut/A_power/director_power/producer_power/genre_power)</p>
+</li>
+<li>
+<p>Distribution(distributor_power/HolidaySeason)</p>
+</li>
+<li>
+<p>Exhibition (numVotes_cut/averageRating_round)</p>
+</li>
+</ul>
+<p>We will restrict the model selection process by blacklisting arcs that point from a later to an earlier block.</p>
+<ul>
+<li>
+<p>Box office revenue cannot influence production, distribution and exhibition</p>
+</li>
+<li>
+<p>Production can only influence Distribution and Exhibition</p>
+</li>
+<li>
+<p>Distribution can only influence exhibition</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic">## Incorporate subjective prior </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Box office revenue cannot influence production, distribution and exhibition </span>
+</span></span><span style="display:flex;"><span>blacklist_1 <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">tiers2blacklist</span>(<span style="color:#900;font-weight:bold">list</span>(<span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;mpaa&#34;</span>, <span style="color:#d14">&#34;budget_cut&#34;</span>, <span style="color:#d14">&#34;A_power&#34;</span>, <span style="color:#d14">&#34;director_power&#34;</span>, <span style="color:#d14">&#34;producer_power&#34;</span>, <span style="color:#d14">&#34;genre_power&#34;</span>, <span style="color:#d14">&#34;distributor_power&#34;</span>, <span style="color:#d14">&#34;HolidaySeason&#34;</span>, <span style="color:#d14">&#34;numVotes_cut&#34;</span>, <span style="color:#d14">&#34;averageRating_round&#34;</span>), <span style="color:#d14">&#34;domestic_cut&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#Distribution can only influence exhibition </span>
+</span></span><span style="display:flex;"><span>blacklist_2 <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">tiers2blacklist</span>(<span style="color:#900;font-weight:bold">list</span>(<span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;numVotes_cut&#34;</span>, <span style="color:#d14">&#34;averageRating_round&#34;</span>), <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;distributor_power&#34;</span>, <span style="color:#d14">&#34;HolidaySeason&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#Production can only influence Distribution and Exhibition </span>
+</span></span><span style="display:flex;"><span>blacklist_3 <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">tiers2blacklist</span>(<span style="color:#900;font-weight:bold">list</span>(<span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;mpaa&#34;</span>, <span style="color:#d14">&#34;budget_cut&#34;</span>, <span style="color:#d14">&#34;A_power&#34;</span>, <span style="color:#d14">&#34;director_power&#34;</span>, <span style="color:#d14">&#34;producer_power&#34;</span>, <span style="color:#d14">&#34;genre_power&#34;</span>), <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;numVotes_cut&#34;</span>, <span style="color:#d14">&#34;averageRating_round&#34;</span>, <span style="color:#d14">&#34;distributor_power&#34;</span>, <span style="color:#d14">&#34;HolidaySeason&#34;</span>)))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>bl <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">rbind</span>(blacklist_1, blacklist_2, blacklist_3)
+</span></span></code></pre></div>
+
+
+
+<h2 id="hill-climbing-algorithm">Hill climbing algorithm
+  <a href="#hill-climbing-algorithm"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>We chose to use Hill Climbing algorithm in our analysis.</p>
+<p><strong>Network 1: Without prior Knowledge</strong>
+<strong>Without Blacklisting arcs</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>bn_net0 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">hc</span>(imdb_movies_discrete)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">graphviz.plot</span>(bn_net0)
+</span></span><span style="display:flex;"><span>na <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">narcs</span>(bn_net0)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Check out the network</span>
+</span></span><span style="display:flex;"><span>bn_net0
+</span></span></code></pre></div><p><img src="p_3.png" alt=""></p>
+<p><em>Network exploration</em></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Check out the Arc Strength </span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">arc.strength</span>(bn_net0,imdb_movies_discrete) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">arrange</span>(<span style="color:#900;font-weight:bold">desc</span>(strength))
+</span></span></code></pre></div><pre tabindex="0"><code>##             from                  to    strength
+## 1   numVotes_cut      director_power   -3.815918
+## 2     budget_cut             A_power  -10.690161
+## 3        A_power      producer_power  -22.731520
+## 4   numVotes_cut             A_power  -26.889533
+## 5           mpaa        numVotes_cut  -32.786270
+## 6  HolidaySeason        domestic_cut  -33.785634
+## 7     budget_cut         genre_power  -51.000243
+## 8     budget_cut                mpaa  -86.250768
+## 9     budget_cut   distributor_power -124.445162
+## 10  numVotes_cut averageRating_round -407.358472
+## 11  domestic_cut          budget_cut -429.056293
+## 12  domestic_cut        numVotes_cut -627.306396
+</code></pre><p>As the HC algorithm has a random initial model, the HC function in the bnlearn package might produce a different network each time it runs. To test for network stability, we run the algorithm 1000 times and see how the models differ from each other. This is shown in the graph below. The stronger the arc color is, the more often such arc is existent in the bootstrap network samples.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic">#checking for stability by bootstrapping</span>
+</span></span><span style="display:flex;"><span>boot<span style="color:#000;font-weight:bold">&lt;-</span><span style="color:#900;font-weight:bold">boot.strength</span>(imdb_movies_discrete,R<span style="color:#000;font-weight:bold">=</span><span style="color:#099">1000</span>, algorithm <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;hc&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">qgraph</span>(boot)
+</span></span></code></pre></div><p><img src="p_4.png" alt=""></p>
+<p>This network is not ideal, as the only root node is HolidaySeason, which is also the only parent node to our intended outcome is domestic_cut. As we expected, there is a lot of reverse causality within the variables. To make box office prediction the primary goal, we potentially need to blacklist some relationships and reverse some arc directions manually.</p>
+<p><strong>Network 2: With Prior Knowledge</strong>
+<strong>With Blacklisting arcs</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>bn_hc <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">hc</span>(imdb_movies_discrete, blacklist<span style="color:#000;font-weight:bold">=</span>bl)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">graphviz.plot</span>(bn_hc)
+</span></span><span style="display:flex;"><span>na <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">narcs</span>(bn_hc)
+</span></span><span style="display:flex;"><span>bn_hc
+</span></span></code></pre></div><p><img src="p_1.png" alt=""></p>
+<p>This network has 11 nodes and 12 directed arcs. There are 139 tests used in the learning procedure. As a modification from the network without blacklisting, domestic cut is now one of the leaf nodes with two immediate parents: budget cut and numVotes_cut.</p>
+<p><em>Compare two Bayesian Networks</em></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># compare score based algorithms</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">all.equal</span>(bn_net0, bn_hc)
+</span></span></code></pre></div><pre tabindex="0"><code>## [1] &#34;Different arc sets&#34;
+</code></pre><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">unlist</span>( bnlearn<span style="color:#000;font-weight:bold">::</span><span style="color:#900;font-weight:bold">compare</span>(bn_net0, bn_hc) )
+</span></span></code></pre></div><pre tabindex="0"><code>## tp fp fn 
+##  5  7  7
+</code></pre><p>These two networks contain different arc sets. Five arcs appear in the DAG learned by the Hill-Climbing algorithm, both with and without blacklist. Additionally, seven arcs appear in the DAG with blacklist, but not in the one without, and vice-versa.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">par</span>(mfrow <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#099">1</span>, <span style="color:#099">2</span>))
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">graphviz.compare</span>(bn_net0, bn_hc)
+</span></span></code></pre></div><p><img src="p_5.png" alt=""></p>
+<p>We can see that the new network with blacklist make more sense intuitively compared with the last one.</p>
+<p><em>Explaination of Bayesian information criterion</em></p>
+<p>Bayesian information criterion (BIC) is a criterion for model selection among a finite set of models.</p>
+<ul>
+<li>
+<p>BIC attempts to resolve the problem of overfitting by introducing a penalty term for the number of parameters.</p>
+</li>
+<li>
+<p>Model with lower BIC is preferred.</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>s1 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">score</span>(bn_net0, data <span style="color:#000;font-weight:bold">=</span> imdb_movies_discrete, type <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;bic&#34;</span>)
+</span></span><span style="display:flex;"><span>s2 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">score</span>(bn_hc, data <span style="color:#000;font-weight:bold">=</span> imdb_movies_discrete, type <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;bic&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">c</span>(s1, s2)
+</span></span></code></pre></div><pre tabindex="0"><code>## [1] -22548.04 -22600.90
+</code></pre><p>Based on the network score, the DAG produced with the network with blacklist provides a slightly better fit to the data.</p>
+
+
+
+
+<h2 id="fitting-a-bn-model-and-parameter-estimate">Fitting a BN model and Parameter estimate
+  <a href="#fitting-a-bn-model-and-parameter-estimate"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>The joint probability distribution of the model obtained with the hill climbing algorithm factorized according to:</p>
+<p>P(A_power, producer_power, budget_cut, mpaa, HolidaySeason,director_power, distributor_power, genre_power, numVotes_cut, avereageRating_round, domestic_cut) = P(A_power)(producer_power|A_power)(budget_cut|A_power)(mpaa|budget_cut)(HolidaySeason|budget_cut)(director_power|producer_power)(distributor_power|budget_cut)(genre_power|budget_cut)(numVotes_cut|A_power, budget_cut)(domestic_cut|budget_cut,numVotes_cut)(averageRating_round|numVotes_cut)</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Fit the model </span>
+</span></span><span style="display:flex;"><span>bn_model <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">bn.fit</span>(bn_hc, imdb_movies_discrete) 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Check out the model coefficient for domestic_cut</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">coef</span>(bn_model<span style="color:#000;font-weight:bold">$</span>domestic_cut)
+</span></span></code></pre></div><pre tabindex="0"><code>## , , numVotes_cut = low
+## 
+##             budget_cut
+## domestic_cut         low      medium        high
+##       low    0.686520376 0.522988506 0.333333333
+##       medium 0.310344828 0.465517241 0.615384615
+##       high   0.003134796 0.011494253 0.051282051
+## 
+## , , numVotes_cut = medium
+## 
+##             budget_cut
+## domestic_cut         low      medium        high
+##       low    0.420382166 0.167095116 0.028301887
+##       medium 0.535031847 0.697943445 0.578616352
+##       high   0.044585987 0.134961440 0.393081761
+## 
+## , , numVotes_cut = high
+## 
+##             budget_cut
+## domestic_cut         low      medium        high
+##       low    0.139784946 0.029850746 0.000000000
+##       medium 0.612903226 0.488805970 0.122093023
+##       high   0.247311828 0.481343284 0.877906977
+</code></pre><p>domestic_cut is directly influenced by budget_cut and numVotes_cut. The coefficients represent the conditional probability distribution of domestic_cut.
+P(domestic_cut|budget_cut,numVotes_cut)</p>
+<p>For example, in the third matrix, the coefficient &ldquo;0.1398&rdquo; is the conditional probability of domestic_cut being low, given high numVotes_cut and low budget_cut.</p>
+
+
+
+
+<h2 id="making-predictions-of-box-office">Making predictions of box office
+  <a href="#making-predictions-of-box-office"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>As all variables are interconnected, once any specific information is given (and becomes our new prior), it could further impact all other nodes. Bayesian networks could be effectively used for prediction purposes.</p>
+<p>In the first example shown below, given that a movie has strong director power and is released in holiday seasons, the Bayesian network predicts that the movie will have a 36% probability of being in the fourth quantile of the domestic box office.</p>
+<p>In the second example shown below, given that we have high domestic box office, non-influential producer, and the holiday season release, the Bayesian network predicts that this movie is unlikely to have cast four influential actors/actresses.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#900;font-weight:bold">set.seed</span>(<span style="color:#099">84735</span>)
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic">#predicting the domestic_cut</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">cpquery</span>(bn_model,event<span style="color:#000;font-weight:bold">=</span>(domestic_cut<span style="color:#000;font-weight:bold">==</span><span style="color:#d14">&#34;high&#34;</span>),evidence<span style="color:#000;font-weight:bold">=</span>(director_power<span style="color:#000;font-weight:bold">==</span><span style="color:#000;font-weight:bold">TRUE</span><span style="color:#000;font-weight:bold">&amp;</span> HolidaySeason<span style="color:#000;font-weight:bold">==</span><span style="color:#000;font-weight:bold">TRUE</span>))
+</span></span></code></pre></div><pre tabindex="0"><code>## [1] 0.3673469
+</code></pre><div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic">#predicting Apower</span>
+</span></span><span style="display:flex;"><span><span style="color:#900;font-weight:bold">cpquery</span>(bn_model,event<span style="color:#000;font-weight:bold">=</span>(A_power<span style="color:#000;font-weight:bold">==</span><span style="color:#099">4</span>),evidence<span style="color:#000;font-weight:bold">=</span>( domestic_cut<span style="color:#000;font-weight:bold">==</span><span style="color:#d14">&#34;high&#34;</span><span style="color:#000;font-weight:bold">&amp;</span>producer_power<span style="color:#000;font-weight:bold">==</span><span style="color:#000;font-weight:bold">FALSE</span><span style="color:#000;font-weight:bold">&amp;</span>HolidaySeason<span style="color:#000;font-weight:bold">==</span><span style="color:#000;font-weight:bold">TRUE</span>))
+</span></span></code></pre></div><pre tabindex="0"><code>## [1] 0.01098901
+</code></pre><p><br>
+\</p>
+
+
+
+
+<h1 id="appendix">Appendix
+  <a href="#appendix"></a>
+</h1>
+
+
+
+
+<h2 id="references">References
+  <a href="#references"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>Antal, P., Fannes, G., Timmerman, D., Moreau, Y., &amp; De Moor, B. P. (2004). Using literature and data to learn Bayesian networks as clinical models of ovarian tumors. Artificial Intelligence in Medicine, 30, 257–281.</p>
+<p>Bessler, D (2000). d-separation without Tears. Texas A&amp;M University. Retrived from 
+<a href="http://bayes.cs.ucla.edu/BOOK-2K/d-sep.html" target="_blank" rel="noopener">http://bayes.cs.ucla.edu/BOOK-2K/d-sep.html</a></p>
+<p>Brufatto, Verena. “Bayesian-Networks/bayesian_networks.RMD at Main · Vettorefburana/Bayesian-Networks.” GitHub, 30 Nov. 2021, 
+<a href="https://github.com/vettorefburana/Bayesian-Networks/blob/main/bayesian_networks.Rmd" target="_blank" rel="noopener">https://github.com/vettorefburana/Bayesian-Networks/blob/main/bayesian_networks.Rmd</a>.</p>
+<p>Chillar, Arush. “Bayesian Structure Learning.” Kaggle, Kaggle, 1 June 2021, 
+<a href="https://www.kaggle.com/arushchillar/bayesian-structure-learning/notebook" target="_blank" rel="noopener">https://www.kaggle.com/arushchillar/bayesian-structure-learning/notebook</a>.</p>
+<p>Elashkar, E. (2016). &ldquo;Constraint Based Bayesian Network Structure Learning Algorithms, Using BNLearn R Package.&rdquo; 
+<a href="https://www.youtube.com/watch?v=4JkddqxGrO0" target="_blank" rel="noopener">https://www.youtube.com/watch?v=4JkddqxGrO0</a></p>
+<p>Johnson, A. A., Ott, M. Q., and Dogucu, M. (2021) Bayes Rules! An Introduction to Applied Bayesian Modeling. Retrieved from 
+<a href="https://www.bayesrulesbook.com/" target="_blank" rel="noopener">https://www.bayesrulesbook.com/</a></p>
+<p>Kirko, Igor. “Boxofficemojo Dataset.” Kaggle, 26 Apr. 2020, 
+<a href="https://www.kaggle.com/igorkirko/wwwboxofficemojocom-movies-with-budget-listed" target="_blank" rel="noopener">https://www.kaggle.com/igorkirko/wwwboxofficemojocom-movies-with-budget-listed</a>.</p>
+<p>Korb K, Nicholson A (2004). Bayesian Artificial Intelligence. Chapman and Hall.</p>
+<p>Kuleshov, V., Ermon, S. Structure Learning for Bayesian Networks. Stanford University. Retrieved from 
+<a href="https://ermongroup.github.io/cs228-notes/learning/structure/" target="_blank" rel="noopener">https://ermongroup.github.io/cs228-notes/learning/structure/</a></p>
+<p>Margaritis D (2003). &ldquo;Learning Bayesian Network Model Structure from Data.&rdquo; Ph.D. thesis,
+School of Computer Science, Carnegie-Mellon University, Pittsburgh, PA. Available as
+Technical Report CMU-CS-03-153.</p>
+<p>Scutari, M (2020). &ldquo;Bayesian Network Constraint-Based Structure Learning Algorithms: Parallel and Optimized Implementations in the bnlearn R Package.&rdquo; Journal of Statistical Software, 77(2), DOI:10.18637/jss.v077.i02</p>
+<p>Verma TS, Pearl J (1991). “Equivalence and Synthesis of Causal Models.” Uncertainty in
+Artificial Intelligence, 6, 255–268.</p>
+
+
+
+
+<h2 id="code-book">Code Book
+  <a href="#code-book"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<p>variable            description</p>
+<hr>
+<p>title               title (name) of the movie
+year                year of production(from 1990 to 2020)
+mpaa_factor         The MPAA rating of a movie, 6 categories:
+(G, PG, PG-13, R, NC-17, NA)
+budget              the budget of a movie in millions (USD)
+domestic            the box office revenue of a movie in millions within the United States
+director_power      True: The director is in the top 100 Grossing Director at                                                           the Worldwide Box Office
+False: otherwise
+producer_power      True:the producer is in the top 100 Grossing Producer at                                                            the Worldwide Box Office
+False: otherwise
+A_power             The count of the four most popular actors within a movies cast with a                                               previous box-office success (0, 1, 2, 3, 4).
+genre_power         True: the primary genre of the movie is Adventure/Action/Drama/Comedy
+False: otherwise
+distributor_power   True: The distributor of this movie is one of the top 10 distributors (measured in total box                        office revenue from 1995 to 2021)                                                      <br>
+False: otherwise
+HolidaySeason       True: April, June, July, November, December
+False: otherwise
+numVotes            number of votes the title has received on IMDB.com
+averageRating       weighted average of all individual user ratings
+domestic_cut        the box office revenue of a movie in millions within the United States cut into three groups:                       Low (Quartile 1), Medium (Quartiles 2-3), High (Quartile 4)
+budget_cut          the budget of a movie in millions (USD) cut into three groups: Low (Quartile 1), Medium                             (Quartiles 2-3), High (Quartile 4) <br>
+numVotes_cut        the number of votes the title has received cut into three groups: Low (Quartile 1), Medium                          (Quartiles 2-3), High (Quartile 4)
+averageRating_round weighted average of all individual user ratings rounded to the nearest integer</p>
+
+
+
+
+<h2 id="data-cleaning">Data Cleaning
+  <a href="#data-cleaning"><svg class="anchor-symbol" aria-hidden="true" height="26" width="26" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 0h24v24H0z" fill="currentColor"></path>
+      <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76.0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71.0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71.0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76.0 5-2.24 5-5s-2.24-5-5-5z"></path>
+    </svg></a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Load movies data</span>
+</span></span><span style="display:flex;"><span>movies <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">read.csv</span>(<span style="color:#d14">&#34;/Users/alexmccreight/BayesianStats/Bayesian Project/Raw Data/Mojo_budget_update.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Load ratings data</span>
+</span></span><span style="display:flex;"><span>ratings <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">read.csv</span>(<span style="color:#d14">&#34;/Users/alexmccreight/BayesianStats/Bayesian Project/Raw Data/rating.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Drop trivia, writer, composer, cinematographer, international, and html columns</span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span>
+</span></span><span style="display:flex;"><span>  movies <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">select</span>(<span style="color:#000;font-weight:bold">-</span><span style="color:#900;font-weight:bold">c</span>(trivia, writer, composer, cinematographer, international, html))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Implement NA&#39;s into blank data</span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new                                   
+</span></span><span style="display:flex;"><span>movies_new[movies_new <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#34;&#34;</span> <span style="color:#000;font-weight:bold">|</span> movies_new <span style="color:#000;font-weight:bold">==</span> <span style="color:#d14">&#34; &#34;</span>] <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#000;font-weight:bold">NA</span> 
+</span></span></code></pre></div><p><strong>Seperate the date variable into 2 different variables</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>split_date <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">tibble</span>(date <span style="color:#000;font-weight:bold">=</span> movies_new<span style="color:#000;font-weight:bold">$</span>release_date)
+</span></span><span style="display:flex;"><span>split_date <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">separate</span>(split_date, date, <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;release_month&#34;</span>, <span style="color:#d14">&#34;realease_day&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">cbind</span>(movies_new, split_date)
+</span></span></code></pre></div><p><strong>Change runtime to a quantative variable</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(run_time_min <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">format</span>(<span style="color:#900;font-weight:bold">as.POSIXct</span>(run_time, format <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;%H hr %M min&#39;</span>), format <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;%M&#39;</span>)) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(run_time_hour <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">format</span>(<span style="color:#900;font-weight:bold">as.POSIXct</span>(run_time, format <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;%H hr %M min&#39;</span>), format <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#39;%H&#39;</span>)) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(run_time_total_min <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">as.integer</span>(run_time_hour)<span style="color:#000;font-weight:bold">*</span><span style="color:#099">60</span> <span style="color:#000;font-weight:bold">+</span> <span style="color:#900;font-weight:bold">as.integer</span>(run_time_min)) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">select</span>(<span style="color:#000;font-weight:bold">-</span><span style="color:#900;font-weight:bold">c</span>(run_time_min, run_time_hour, run_time))
+</span></span></code></pre></div><p><strong>Add a Holiday Season Variable</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Create a variable to determine whether or not a movie was released during the holiday season (We chose Easter, Summer Holidays, Thanksgiving, and Christmas)</span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(HolidaySeason <span style="color:#000;font-weight:bold">=</span> release_month <span style="color:#000;font-weight:bold">%in%</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;April&#34;</span>, <span style="color:#d14">&#34;June&#34;</span>, <span style="color:#d14">&#34;July&#34;</span>, <span style="color:#d14">&#34;November&#34;</span>, <span style="color:#d14">&#34;December&#34;</span>))
+</span></span></code></pre></div><p><strong>Add stars power vairable</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Create a variable to determine whether or not the cast is in the top 100 stars in leading roles at the worldwide box office</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>stars <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">read_html</span>(<span style="color:#d14">&#34;https://www.the-numbers.com/box-office-star-records/worldwide/lifetime-acting/top-grossing-leading-stars&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect Rank</span>
+</span></span><span style="display:flex;"><span>top_100_rank <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;#page_filling_chart .data&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect Name</span>
+</span></span><span style="display:flex;"><span>top_100_name <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;#page_filling_chart b a&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect Worldwide Box Office</span>
+</span></span><span style="display:flex;"><span>top_100_worldwide_box_office <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;td:nth-child(3)&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect number of Movies</span>
+</span></span><span style="display:flex;"><span>top_100_num_Movies <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;td:nth-child(4)&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect Average box office per movie</span>
+</span></span><span style="display:flex;"><span>top_100_avg_box_office <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;td:nth-child(5)&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>top_100_actor <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">tibble</span>(Rank <span style="color:#000;font-weight:bold">=</span> top_100_rank, Name <span style="color:#000;font-weight:bold">=</span> top_100_name, `Worldwide Box Office` <span style="color:#000;font-weight:bold">=</span> top_100_worldwide_box_office, Movies <span style="color:#000;font-weight:bold">=</span> top_100_num_Movies, Average <span style="color:#000;font-weight:bold">=</span> top_100_avg_box_office)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Add new variables </span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(A_power_1 <span style="color:#000;font-weight:bold">=</span> main_actor_1 <span style="color:#000;font-weight:bold">%in%</span> top_100_actor<span style="color:#000;font-weight:bold">$</span>Name)
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(A_power_2 <span style="color:#000;font-weight:bold">=</span> main_actor_2 <span style="color:#000;font-weight:bold">%in%</span> top_100_actor<span style="color:#000;font-weight:bold">$</span>Name)
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(A_power_3 <span style="color:#000;font-weight:bold">=</span> main_actor_3 <span style="color:#000;font-weight:bold">%in%</span> top_100_actor<span style="color:#000;font-weight:bold">$</span>Name)
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(A_power_4 <span style="color:#000;font-weight:bold">=</span> main_actor_4 <span style="color:#000;font-weight:bold">%in%</span> top_100_actor<span style="color:#000;font-weight:bold">$</span>Name)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Combine the Actors power by adding the 4 main actors/actress together</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(A_power <span style="color:#000;font-weight:bold">=</span> A_power_1 <span style="color:#000;font-weight:bold">+</span> A_power_2 <span style="color:#000;font-weight:bold">+</span> A_power_3 <span style="color:#000;font-weight:bold">+</span> A_power_4)
+</span></span></code></pre></div><p><strong>Add a director power vairable</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Create a variable to determine whether or not the direct is in the top 100 Grossing Director at the Worldwide Box Office</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>directors <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">read_html</span>(<span style="color:#d14">&#34;https://www.the-numbers.com/box-office-star-records/worldwide/lifetime-specific-technical-role/director&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect Name</span>
+</span></span><span style="display:flex;"><span>top_100_Director_Name <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;#page_filling_chart b a&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Add new variable</span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(director_power <span style="color:#000;font-weight:bold">=</span> director <span style="color:#000;font-weight:bold">%in%</span> top_100_Director_Name)
+</span></span></code></pre></div><p><strong>Add a producer power vairable</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Create a variable to determine whether or not the producer is in the top 100 Grossing Producer at the Worldwide Box Office</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>directors <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">read_html</span>(<span style="color:#d14">&#34;https://www.the-numbers.com/box-office-star-records/worldwide/lifetime-specific-technical-role/producer&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Retrive and inspect Name</span>
+</span></span><span style="display:flex;"><span>top_100_Producer_Name <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  stars <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_nodes</span>(<span style="color:#d14">&#34;.data+ td&#34;</span>) <span style="color:#000;font-weight:bold">%&gt;%</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">html_text</span>()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Add new variable</span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(producer_power <span style="color:#000;font-weight:bold">=</span> producer <span style="color:#000;font-weight:bold">%in%</span> top_100_Producer_Name)
+</span></span></code></pre></div><p><strong>Add a power of the distributor variable</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Create a variable to determine the power of a distributor (1 = top 10 distributor, 0 = otherwise)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>distributor_1 <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;Walt Disney Studios Motion Pictures&#34;</span>, <span style="color:#d14">&#34;Warner Bros.&#34;</span>, <span style="color:#d14">&#34;Sony Pictures Releasing&#34;</span>, <span style="color:#d14">&#34;Universal Pictures&#34;</span>, <span style="color:#d14">&#34;Twentieth Century Fox&#34;</span>, <span style="color:#d14">&#34;Paramount Classics&#34;</span>, <span style="color:#d14">&#34;Lionsgate&#34;</span>, <span style="color:#d14">&#34;New Line Cinema&#34;</span>, <span style="color:#d14">&#34;DreamWorks&#34;</span>, <span style="color:#d14">&#34;Miramax&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Add new variable</span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(distributor_power <span style="color:#000;font-weight:bold">=</span> distributor <span style="color:#000;font-weight:bold">%in%</span> distributor_1)
+</span></span></code></pre></div><p><strong>Genre</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># We kept the primary genre of each movie. Based on the market share for box office revenue, we decided to make a dummy variable, genre_power, that includes Adventure, Action, Drama, and Comedy, as they account for 77.03% of all revenues in the box office from 1995 to 2021. </span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#998;font-style:italic"># https://www.the-numbers.com/market/genres</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>movies_new <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(genre_power <span style="color:#000;font-weight:bold">=</span>  genre_1 <span style="color:#000;font-weight:bold">%in%</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;Adventure&#34;</span>, <span style="color:#d14">&#34;Action&#34;</span>, <span style="color:#d14">&#34;Drama&#34;</span>, <span style="color:#d14">&#34;Comedy&#34;</span>))
+</span></span></code></pre></div><p><strong>Joining the datasets</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span><span style="color:#998;font-style:italic"># Join the movies dataset with the ratings dataset</span>
+</span></span><span style="display:flex;"><span>imdb_movies <span style="color:#000;font-weight:bold">&lt;-</span> movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">inner_join</span>(ratings, by <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;movie_id&#34;</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#d14">&#34;tconst&#34;</span>)) 
+</span></span></code></pre></div><p><strong>Change Quantitative Variables into Categorical Variables</strong></p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-r" data-lang="r"><span style="display:flex;"><span>imdb_movies_new <span style="color:#000;font-weight:bold">&lt;-</span> <span style="color:#900;font-weight:bold">read.csv</span>(<span style="color:#d14">&#34;/Users/alexmccreight/BayesianStats/Bayesian Project/imdb_movies_new.csv&#34;</span>)
+</span></span><span style="display:flex;"><span>imdb_movies_new <span style="color:#000;font-weight:bold">&lt;-</span> 
+</span></span><span style="display:flex;"><span>  imdb_movies_new <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(domestic_cut <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">cut</span>(domestic, breaks<span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#099">0</span>, <span style="color:#099">17600423</span>,  <span style="color:#099">84351197</span>, <span style="color:#000;font-weight:bold">Inf</span>), 
+</span></span><span style="display:flex;"><span>                                labels <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;low&#34;</span>, <span style="color:#d14">&#34;medium&#34;</span>, <span style="color:#d14">&#34;high&#34;</span>))) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(budget_cut <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">cut</span>(budget, breaks<span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#099">0</span>, <span style="color:#099">18000000</span>,  <span style="color:#099">69000000</span>, <span style="color:#000;font-weight:bold">Inf</span>), 
+</span></span><span style="display:flex;"><span>                                labels <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;low&#34;</span>, <span style="color:#d14">&#34;medium&#34;</span>, <span style="color:#d14">&#34;high&#34;</span>))) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(numVotes_cut <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">cut</span>(numVotes, breaks<span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#099">0</span>, <span style="color:#099">36227</span>,  <span style="color:#099">202107</span>, <span style="color:#000;font-weight:bold">Inf</span>), 
+</span></span><span style="display:flex;"><span>                                labels <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">c</span>(<span style="color:#d14">&#34;low&#34;</span>, <span style="color:#d14">&#34;medium&#34;</span>, <span style="color:#d14">&#34;high&#34;</span>))) <span style="color:#000;font-weight:bold">%&gt;%</span> 
+</span></span><span style="display:flex;"><span>  <span style="color:#900;font-weight:bold">mutate</span>(averageRating_round <span style="color:#000;font-weight:bold">=</span> <span style="color:#900;font-weight:bold">round</span>(averageRating))
+</span></span></code></pre></div><p><br>
+\</p>
+
+        
+        <details closed class="f6 fw7 input-reset">
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Posted on:</dt>
+    <dd class="fw5 ml0">December 17, 2021</dd>
+  </dl>
+  <dl class="f6 lh-copy">
+    <dt class="fw7">Length:</dt>
+    <dd class="fw5 ml0">27 minute read, 5607 words</dd>
+  </dl>
+  
+  
+  
+  <dl class="f6 lh-copy">
+    <dt class="fw7">See Also:</dt>
+    
+  </dl>
+</details>
+
+      </section>
+      <footer class="post-footer">
+        <div class="post-pagination dt w-100 mt4 mb2">
+  
+  
+    <a class="prev dtc pr2 tl v-top fw6"
+    href="https://alexmccreight.netlify.app/project/2022-03-27-activestudy/">&larr; The Effects of Education on Processing Speed: A Longitudinal Analysis of the ACTIVE Study</a>
+  
+  
+  
+</div>
+
+      </footer>
+    </article>
+    
+      
+<div class="post-comments pa0 pa4-l mt4">
+  
+  <script src="https://utteranc.es/client.js"
+          repo="alexmccreight/alex-hugosite"
+          issue-term="pathname"
+          theme="boxy-light"
+          label="comments :crystal_ball:"
+          crossorigin="anonymous"
+          async
+          type="text/javascript">
+  </script>
+  
+</div>
+
+    
+  </section>
+</main>
+<footer class="site-footer pv4 bt b--transparent ph5" role="contentinfo">
+  <nav class="db dt-l w-100">
+    <p class="site-copyright f7 db dtc-l v-mid w-100 w-33-l tc tl-l pv2 pv0-l mv0 lh-copy">
+      &copy; 2022 Alex McCreight
+      <span class="middot-divider"></span>
+      Made with <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/hugo-apero/" rel="dct:source">Hugo Apéro</a></span>.
+      <br />
+      
+Based on <span xmlns:dct="http://purl.org/dc/terms/" property="dct:title"><a xmlns:dct="http://purl.org/dc/terms/" href="https://github.com/formspree/blogophonic-hugo" rel="dct:source">Blogophonic</a></span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://formspree.io" property="cc:attributionName" rel="cc:attributionURL">Formspree</a>.
+    </p>
+    
+    <div class="site-social-links db dtc-l v-mid w-100 w-33-l tc pv2 pv0-l mv0">
+      <div class="social-icon-links" aria-hidden="true">
+  
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://github.com/alexmccreight" title="github" target="_blank" rel="noopener">
+      <i class="fab fa-github fa-lg fa-fw"></i>
+    </a>
+  
+    
+    
+    
+      
+    
+    
+    
+    
+    
+      
+    
+    <a class="link dib h1 w1 ml0 mr2 f6 o-90 glow" href="https://twitter.com/apmccreight" title="twitter" target="_blank" rel="noopener">
+      <i class="fab fa-twitter fa-lg fa-fw"></i>
+    </a>
+  
+</div>
+
+    </div>
+    
+    <div class="site-links f6 db dtc-l v-mid w-100 w-67-l tc tr-l pv2 pv0-l mv0">
+      
+      <a class="dib pv1 ph2 link" href="/contact/" title="Contact form">Contact</a>
+      
+    </div>
+  </nav>
+  
+    <script>
+
+    var i, text, code, codes = document.getElementsByTagName('code');
+    for (let i = 0; i < codes.length;) {
+      code = codes[i];
+      if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+        text = code.textContent;
+        if (/^\$[^$]/.test(text) && /[^$]\$$/.test(text)) {
+          text = text.replace(/^\$/, '\\(').replace(/\$$/, '\\)');
+          code.textContent = text;
+        }
+        if (/^\\\((.|\s)+\\\)$/.test(text) ||
+            /^\\\[(.|\s)+\\\]$/.test(text) ||
+            /^\$(.|\s)+\$$/.test(text) ||
+            /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+          code.outerHTML = code.innerHTML;  
+          continue;
+        }
+      }
+      i++;
+    }
+</script>
+
+  
+    
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css" integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js" integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+
+    
+  
+  
+</footer>
+
+      </div>
+    </body>
+</html>

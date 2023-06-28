@@ -6,7 +6,7 @@ use_featured: false # if false, use most recent by date
 number_categories: 3 # set to zero to exclude
 show_intro: true
 intro: |
-  Hi, and welcome to my site! My name is Alex McCreight, and I am originally from the Kansas City area. Currently, I study applied mathematics and statistics at Macalester College in St. Paul, Minnesota. I am researching Chronic Kidney Disease of Unknown etiology (CKDu) occurring in Nicaragua under Associate Professor Brianna Heggeseth. My personal interests include travel, fitness, gaming, music, and the Kansas City Chiefs.
+  My name is Alex McCreight, and I am originally from the Kansas City area. I recentely graduated from Macalester College with a bachelor's in Applied Mathematics and Statistics. During my time at Macalester College, I researched Chronic Kidney Disease of Unknown etiology (CKDu) occurring in Nicaragua under Dr. Brianna Heggeseth. My personal interests include reading, travel, fitness, gaming, music, and sports.
 
 outro: |
   
