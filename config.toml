@@ -31,8 +31,8 @@ enableEmoji = true
   orgName = "Alex McCreight"
   orgLocal = ""
   description = "Master's Researcher"
-  favicon = "/img/a.png" #Icon at top of the browser
-  logo = "/img/a.png" #Main b logo to change
+  favicon = "/img/a.jpg" #Icon at top of the browser
+  logo = "/img/a.jpg" #Main b logo to change
   mainSections = ["blog","project"] #sections featured on the about me
   navallcaps = true
   # show/hide social icons in site header & footer
