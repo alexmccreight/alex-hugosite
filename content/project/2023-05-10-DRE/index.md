@@ -2,20 +2,19 @@
 title: "Introduction to Doubly Robust Estimation"
 author: "Alex McCreight"
 date: '2023-05-10'
-excerpt: For my causal inference capstone, I simulated data and used an incorrectly specified outcome regression model and correctly specified inverse probablity weighting model to show the robustness of doubly robust estimation (and vice-versa.)
+excerpt: For my causal inference capstone, I simulated data and used an incorrectly specified outcome regression model and a correctly specified inverse probability weighting model to show the robustness of doubly robust estimation (and vice-versa.)
 ---
 
 # Introduction
 
-Estimating causal effects from non randomized experiments and observational studies is not an easy task as they are often riddled with confounders that could potentially bias our data and results. We could employ methods such as regression and inverse probability weighting to help control for confounding, but their effectiveness depends on correct model specification which is not easy to achieve. Doubly robust estimation offers a unique advantage in this context, as it combines both of these approaches, providing consistent causal effect estimates even if only one of the two models is correctly specified. This robustness makes it an attractive choice for those looking to draw causal inferences from observational data with greater confidence and reliability.
+Estimating causal effects from nonrandomized experiments and observational studies is difficult as they are often riddled with confounders that could potentially bias our data and results. We could employ methods such as regression and inverse probability weighting to help control for confounding, but their effectiveness depends on correct model specification, which is not easy to achieve. Doubly robust estimation offers a unique advantage in this context, as it combines both of these approaches, providing consistent causal effect estimates even if only one of the two models is correctly specified. This robustness makes it an attractive choice for those looking to draw causal inferences from observational data with greater confidence and reliability.
 
-# Simulate the Data
+# Simulating the Data & Specifying its Casual Structure
 
-We will generate simulated data to illustrate the limitations of traditional methods in estimating causal effects and demonstrate how the application of doubly robust estimation can effectively address these shortcomings, offering a more reliable approach. We will use 10 different simulated data sets and run each model over each data set and take the average of any estimates found to show the properties of the methods used on average. This will eliminate some of the variability from the data, thus making the results more robust. 
+We will generate simulated data to illustrate the limitations of traditional methods in estimating causal effects and demonstrate how the application of doubly robust estimation can effectively address these shortcomings, offering a more reliable approach. We will use ten different simulated data sets and run each model over each data set and take the average of any estimates found to show the properties of the methods used on average. This will eliminate some of the variability from the data, thus making the results more robust. 
 
-# Casual Structure
+When creating my outcome variable, I first create two random variables, a poisson and normal, and use those variables to create my treatment variable. I then take the product of my initial random variables and add five times the treatment variable to get my outcome. Thus, `randomVar1` and `randomVar2` affect treatment and outcome, but not each other. Additionally, treatment only affects the outcome, and the outcome does not affect anything.
 
-When creating my outcome variable, I first create two random variables and use those variables to create my treatment variable. I then take the product of my initial variables and add 5 times the treatment variable to get my outcome. Thus, `randomVar1` and `randomVar2` affect treatment and outcome, but not each other. Additionally, treatment only affect the outcome, and the outcome does not affect anything.
 
 
 ```r
@@ -51,7 +50,7 @@ for(i in 1:10){
 # Place to store the treatment coefficients
 treatment_coefficients <- numeric(10)
 
-# Loop through the 10 data frames, run the linear regression, and store the results
+# Loop through the 10 data frames, run the linear regression and store the results
 for (i in 1:10) {
   sim_data <- get(paste0("sim_data_", i))
   lm_result <- lm(outcome ~ randomVar1 * randomVar2 + treatment, data = sim_data)
@@ -67,7 +66,7 @@ mean_treatment_coefficient
 ## [1] 5
 ```
 
-To begin the analysis, I ran ten ordinary least squares with the treatment variable and an interaction term of our two random variables, and then took the average of the treatment coefficient estimates. We know that this the model was properly specified as we defined it during the simulation process. So, the result of 5 confirms that the ordinary least squares accurately predicted the average causal effect when properly specified. 
+To begin the analysis, I ran ten ordinary least squares with the treatment variable and an interaction term of our two random variables. Then I took the average of the treatment coefficient estimates. We know this model was correctly specified, as I defined it during the simulation. So, the result of 5 confirms that the ordinary least squares accurately predicted the average causal effect when properly specified. 
 
 ## Incorrectly Specifying our Regression Model
 
@@ -89,11 +88,10 @@ mean_treatment_coefficient
 ```
 
 ```
-## [1] 4.75624
+## [1] 4.738624
 ```
 
-Now, I intentionally misspecified the ordinary least squares model to show that the average causal effect no longer equals 5 when the model is incorrect. Often times, in practice it is not always apparent whether or not to include certain variables or an interaction term. We see that while we did include both `randomVar1` and `randomVar2`, the average causal effect is not 5 because we did not include the interaction term as well. 
-
+Now, I intentionally misspecified the ordinary least squares model to show that the average causal effect no longer equals 5 when the model is incorrect. In practice, it is not always apparent whether or not to include certain variables or an interaction term. We see that while we included both `randomVar1` and `randomVar2`, the average causal effect is not 5 because we did not include the interaction term as well. 
 
 # IPW Approach
 
@@ -127,10 +125,10 @@ mean_estimated_ACE
 ```
 
 ```
-## [1] 5.140631
+## [1] 5.101151
 ```
 
-Now, we can run a similar analysis using inverse probability weighting. We originally create our propensitiy score model with the treatment variable as our outcome and include the interaction term between our two random variables (thus the model is properly specified). We then can calculate the expected IPW for the treatment yes group and the treatment no group, and take the different to find the expected average casual effect of around 5. 
+Similarly, we can run an analysis using inverse probability weighting. I created a propensity score model with the treatment variable as the outcome and included the interaction term between the two random variables (thus, the model is properly specified). I then can calculate the expected IPW for the treatment yes group and the treatment no group and take the difference to find the expected average causal effect of around 5.
 
 ## Incorrectly Specifying our IPW Model
 
@@ -162,10 +160,10 @@ mean_estimated_ACE
 ```
 
 ```
-## [1] 6.440072
+## [1] 6.513908
 ```
 
-In this example, we ran a similar inverse probability weighting analysis, but instead of neglecting the interaction term, we only included `randomVar2`. This is another example of model misspecification, and we can see that even when we properly run the estimation process, our estimated expected average causal effect is even further away from the truth. 
+In this example, I ran a similar inverse probability weighting analysis, but instead of neglecting the interaction term, I only included `randomVar2`. This is another example of model misspecification, and we can see that even when we properly run the estimation process, our estimated expected average causal effect is even further away from the truth.  
 
 # Doubly Robust Estimation using the AIPW package
 
@@ -220,7 +218,7 @@ mean_att_estimate
 ## [1] 5
 ```
 
-Finally, we can now use doubly robust estimation (otherwise known as augmented inverse probability weighting) to give ourselves two chances of properly specifying our model. First, we will create ten regression models, similar to those from above, and then we will create ten IPW models. Once we collect all of our estimates of the ATT (average treatment effect among the treated) we can calculate an average of these numbers, giving us our estimated average causal effect of the truth (contingent upon one of the models being properly specified). After running this simulation, we can see that when misspecifying our IPW model (by not including the interaction term between `randomVar1` and `randomVar2`), we still get estimates of 5 for our ATT which matches the true average causal effect of the treatment variable. 
+Finally, I use doubly robust estimation (also known as augmented inverse probability weighting) to allow two chances to specify the model properly. First, I created ten regression models similar to those from above, and then I created ten IPW models. After the model yielded the ATT estimates, I calculated their averages which is the estimated average causal effect of the truth (contingent upon one of the models being properly specified). After running this simulation, we can see that when misspecifying our IPW model (by not including the interaction term between `randomVar1` and `randomVar2`), I still get estimates of 5 for the ATT, which matches the true average causal effect of the treatment variable. 
 
 
 ```r
@@ -268,14 +266,14 @@ mean_att_estimate
 ```
 
 ```
-## [1] 4.945876
+## [1] 5.046649
 ```
 
-Similarly, we can misspecify our ordinary least squares model (by not including the interaction term between `randomVar1` and `randomVar2`), and properly specify the IPW model and find that our final result is still just around the true average causal effect of five.
+Similarly, when I misspecify the ordinary least squares model (by not including the interaction term between `randomVar1` and `randomVar2`) and properly specify the IPW model, I find that the final result is still around the true average causal effect of five.
 
 # Final Thoughts
 
-In conclusion, we have shown the advantages of using doubly robust estimation. Through the use of simulated data, we demonstrated the limitations of traditional methods, such as ordinary least squares and inverse probability weighting, when models are misspecified. Furthermore, we showed how we can build upon our traditional methods to create a model that combines the two approaches making for a robust estimation of average causal effects. Doubly robust estimation is particularly useful in real-world scenarios where model specification is uncertain, and it can be a useful tool for researchers to understand causal relationships between variables with more confidence.
+In conclusion, I have shown the advantages of using doubly robust estimation. Using simulated data, I demonstrated the limitations of traditional methods, such as ordinary least squares and inverse probability weighting, when models are misspecified. Furthermore, I showed how we could build upon our traditional methods to create a model that combines the two approaches making for a robust estimation of average causal effects. Doubly robust estimation is particularly useful in real-world scenarios where model specification is uncertain, and it can be a useful tool for researchers to understand causal relationships between variables with more confidence.
 
 # Sources
 

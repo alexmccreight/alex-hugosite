@@ -33,7 +33,7 @@ housing <- BostonHousing
 
 ## Data Context 
 
-I chose to use Boston housing data from the 'mlbench' library for our research project. The data set contains 506 cases and 14 variables. Each case represents a census tract of Boston from the 1970 census. The variables include per capita crime rate, nitric oxide concentration, the average number of rooms per place of residence, the pupil-teacher ratio by census tract, the median value of homes, and more. The Census Bureau collects all census data through a variety of methods. They utilize business data, census surveys, federal/state/local government data, and other commercial agencies. The Census Bureau collects this data once a decade to "determine the number of seats each state has in the U.S. House of Representatives and is also used to distribute hundreds of billions of dollars in federal funds to local communities" (Bureau 2021).
+I chose to use Boston housing data from the 'mlbench' library for my research project. The data set contains 506 cases and 14 variables. Each case represents a census tract of Boston from the 1970 census. The variables include per capita crime rate, nitric oxide concentration, the average number of rooms per place of residence, the pupil-teacher ratio by census tract, the median value of homes, and more. The Census Bureau collects all census data through a variety of methods. They utilize business data, census surveys, federal/state/local government data, and other commercial agencies. The Census Bureau collects this data once a decade to "determine the number of seats each state has in the U.S. House of Representatives and is also used to distribute hundreds of billions of dollars in federal funds to local communities" (Bureau 2021).
 
 ## Research Questions
 
@@ -91,7 +91,7 @@ mod1 <- fit(lm_spec, medv ~ ., data = housing)
 
 tidy(mod1)
 ```
-For our first model, we use ordinary least-squares to predict the median value of Boston owner-occupied homes by census tract using all 14 predictors in our data set. We can see that `indus` (the proportion of non-retail business acres per town) and `age` (the proportion of owner-occupied units built prior to 1940) are not statistically significant as their p-values are greater than 0.05.
+For my first model, I use ordinary least-squares to predict the median value of Boston owner-occupied homes by census tract using all 14 predictors in our data set. We can see that `indus` (the proportion of non-retail business acres per town) and `age` (the proportion of owner-occupied units built prior to 1940) are not statistically significant as their p-values are greater than 0.05.
 
 
 ### GAM + LASSO Model Creation
@@ -125,7 +125,7 @@ tune_output <- tune_grid( # New function for tuning parameters
 autoplot(tune_output) + theme_classic()
 ```
 
-To begin our second model, we must first tune our penalty term, $\lambda$. The visualization shows the value of the penalty term along the x-axis and the cross-validated MAE values on the y-axis.
+To begin the LASSO model, we must first tune our penalty term, $\lambda$. The visualization shows the value of the penalty term along the x-axis and the cross-validated MAE values on the y-axis.
 
 ```{r}
 # Collect MAE values of all 30 potential lambda values
@@ -177,7 +177,7 @@ coefs_lambdas %>%
         plot.title = element_text(hjust = 0.5))
 ```
 
-The dotted line of our LASSO variable significance graph is our penalty term, $\lambda$ = 0.5736153. We can see that only seven predictors remain after applying our penalty term: `crim`, `rm`, `dis`, `ptratio`, `b`, `lstat`, and `chas_x1`. We will now examine the relationships between these predictors and the outcome, `medv`, to determine whether or not a natural spline is necessary, except for `chas_x1` as it is binary.
+The dotted line of our LASSO variable significance graph is our penalty term, $\lambda$ = 0.5736153. We can see that only seven predictors remain after applying our penalty term: `crim`, `rm`, `dis`, `ptratio`, `b`, `lstat`, and `chas_x1`. I will now examine the relationships between these predictors and the outcome, `medv`, to determine whether or not a natural spline is necessary, except for `chas_x1` as it is binary.
 
 
 ```{r}
@@ -203,7 +203,7 @@ initial_gam_mod %>% pluck('fit') %>% summary()
 initial_gam_mod %>% pluck('fit') %>% plot( all.terms = TRUE, pages = 1)
 ```
 
-From our summary, we can see that census tracts that bound the Charles River have, on average, a $1,843 higher median home value than census tracts that do not bound the Charles River, keeping all other predictors fixed. Also, based on the smooth terms, `b` may not be a strong predictor after considering other variables in the model. However, the p-value is nearly less than 0.05, so we will include it for now. Looking at our graphs, the relationship between the median home value and the predictors `rm`, `dis`, and `lstat` appear to be nonlinear, suggesting that we will need splines for these variables. We will use rounded estimated degrees of freedom to apply these natural splines and add them to the final GAM + LASSO model. 
+From the summary, we can see that census tracts that bound the Charles River have, on average, a $1,843 higher median home value than census tracts that do not bound the Charles River, keeping all other predictors fixed. Also, based on the smooth terms, `b` may not be a strong predictor after considering other variables in the model. However, the p-value is nearly less than 0.05, so we will include it for now. Looking at our graphs, the relationship between the median home value and the predictors `rm`, `dis`, and `lstat` appear to be nonlinear, suggesting that we will need splines for these variables. We will use rounded estimated degrees of freedom to apply these natural splines and add them to the final GAM + LASSO model. 
 
 ```{r} 
 # Update GAM Based On Summaries and Plot + Check for the edf values
@@ -254,7 +254,7 @@ fit_resamples(
 ) %>% collect_metrics()
 ```
 
-Our GAM + LASSO model has a lower cross-validated MAE, RMSE, and a higher R-Squared value than our OLS model. This means that the magnitude of the residuals is smaller for the GAM + LASSO model, and it also accounts for 80.417% of the variation in the median value of Boston owner-occupied homes per census tract compared to the OLS model's 72.103%. 
+The GAM + LASSO model has a lower cross-validated MAE, RMSE, and a higher R-Squared value than our OLS model. This means that the magnitude of the residuals is smaller for the GAM + LASSO model, and it also accounts for 80.417% of the variation in the median value of Boston owner-occupied homes per census tract compared to the OLS model's 72.103%. 
 
 ### Residual Plots
 
@@ -292,7 +292,7 @@ p2 <- gam_output %>%
 grid.arrange(p1, p2, ncol = 2)
 ```
 
-Our OLS model generally does a good job of predicting the median home values for Boston census tracts. However, we can see that our OLS model begins to underpredict median home values as they increase past 35,000 USD. From our GAM residual plot, we can see that the magnitude of the residuals is much smaller, especially for median home values that are greater than 35,000 USD. 
+The OLS model generally does a good job of predicting the median home values for Boston census tracts. However, we can see that the OLS model begins to underpredict median home values as they increase past 35,000 USD. From the GAM residual plot, we can see that the magnitude of the residuals is much smaller, especially for median home values that are greater than 35,000 USD. 
 
 ### Slope Coefficient Interpreations 
 
@@ -330,11 +330,11 @@ housing %>%
   theme_classic()
 ```
 
-While we cannot interpret our coefficients with natural splines, we can examine their relationships with the outcome, median home values. For our first graph, `rm` vs. `medv`, we see a positive slope for dwellings with an average of 4 - 6.5 rooms. Once the average number of rooms per dwelling exceeds 6.5, the median home values increase at a faster rate. Our second graph, `dis` vs. `medv`, shows that census tracts that are closer to the five selected employment centers tend to have lower median home values until they reach a distance of 3 units. After this point, the weighted distance to the employment centers has almost no effect. Our final graph, `lstat` vs. `medv`, shows a significant negative relationship between the percentage of the lower status population and median home values that eventually flattens out as the percentage of the lower status population increases. 
+While we cannot interpret our coefficients with natural splines, we can examine their relationships with the outcome, median home values. For the first graph, `rm` vs. `medv`, we see a positive slope for dwellings with an average of 4 - 6.5 rooms. Once the average number of rooms per dwelling exceeds 6.5, the median home values increase at a faster rate. The second graph, `dis` vs. `medv`, shows that census tracts that are closer to the five selected employment centers tend to have lower median home values until they reach a distance of 3 units. After this point, the weighted distance to the employment centers has almost no effect. The final graph, `lstat` vs. `medv`, shows a significant negative relationship between the percentage of the lower status population and median home values that eventually flattens out as the percentage of the lower status population increases. 
 
 ### Conclusion
 
-Our GAM + LASSO model does a great job examining which predictors most affect the median value of owner-occupied homes in Boston. We found that as the crime in a census tract increases, the pupil-teacher ratio increases, and the proportion of the lower status population living in a census tract increases, the median value of homes will decrease. These results indicate that we should look into the history of redlining in Boston and see if there is a correlation between neighborhoods that have been redlined in the past and a low median house value.
+The GAM + LASSO model does a great job examining which predictors most affect the median value of owner-occupied homes in Boston. I found that as the crime in a census tract increases, the pupil-teacher ratio increases, and the proportion of the lower status population living in a census tract increases, the median value of homes will decrease. These results indicate that one should look into the history of redlining in Boston and see if there is a correlation between neighborhoods that have been redlined in the past and a low median house value.
 
 ## Classification: Methods
 

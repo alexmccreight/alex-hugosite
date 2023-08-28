@@ -1,5 +1,5 @@
 ---
-title: "What casues Chronic Kidney Disease of Unknown Etiology?"
+title: "What causes Chronic Kidney Disease of Unknown Etiology?"
 date: '2022-07-20'
 excerpt: Using Growth Mixture Models and Hidden Markov Models to differentiate the etiology and pathogenesis of CKDu
 ---
