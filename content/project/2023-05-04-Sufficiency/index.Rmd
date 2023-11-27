@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 
 # Review: Properties of Estimators
 
-1. Please state the definition of unbiasedness. Please list the difference between unbiased estimator and asymptotically estimator. 
+1. Please state the definition of unbiasedness. Please list the difference between unbiased estimator and asymptotically unbiased estimator. 
 
 2. Please state the definition of an estimator's efficiency. When do we know that an estimator is most efficient?
 

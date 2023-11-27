@@ -1,7 +1,7 @@
 ---
-author: Alex McCreight
+#author: Alex McCreight
 cascade:
-  author: Alex McCreight
+  #author: Alex McCreight
   show_author_byline: true
   show_comments: true
   show_post_date: true

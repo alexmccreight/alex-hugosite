@@ -177,7 +177,7 @@ coefs_lambdas %>%
         plot.title = element_text(hjust = 0.5))
 ```
 
-The dotted line of our LASSO variable significance graph is our penalty term, $\lambda$ = 0.5736153. We can see that only seven predictors remain after applying our penalty term: `crim`, `rm`, `dis`, `ptratio`, `b`, `lstat`, and `chas_x1`. I will now examine the relationships between these predictors and the outcome, `medv`, to determine whether or not a natural spline is necessary, except for `chas_x1` as it is binary.
+The dotted line of our LASSO variable significance graph is our penalty term, $\lambda$ = 0.574. We can see that only seven predictors remain after applying our penalty term: `crim`, `rm`, `dis`, `ptratio`, `b`, `lstat`, and `chas_x1`. I will now examine the relationships between these predictors and the outcome, `medv`, to determine whether or not a natural spline is necessary, except for `chas_x1` as it is binary.
 
 
 ```{r}
@@ -203,7 +203,7 @@ initial_gam_mod %>% pluck('fit') %>% summary()
 initial_gam_mod %>% pluck('fit') %>% plot( all.terms = TRUE, pages = 1)
 ```
 
-From the summary, we can see that census tracts that bound the Charles River have, on average, a $1,843 higher median home value than census tracts that do not bound the Charles River, keeping all other predictors fixed. Also, based on the smooth terms, `b` may not be a strong predictor after considering other variables in the model. However, the p-value is nearly less than 0.05, so we will include it for now. Looking at our graphs, the relationship between the median home value and the predictors `rm`, `dis`, and `lstat` appear to be nonlinear, suggesting that we will need splines for these variables. We will use rounded estimated degrees of freedom to apply these natural splines and add them to the final GAM + LASSO model. 
+From the summary, we can see that census tracts that bound the Charles River have, on average, a $1,843 higher median home value than census tracts that do not bound the Charles River, keeping all other predictors fixed. Also, based on the smooth terms, `b` may not be a strong predictor after considering other variables in the model. However, the p-value is nearly less than 0.05, so I will include it for now. Looking at our graphs, the relationship between the median home value and the predictors `rm`, `dis`, and `lstat` appear to be nonlinear, suggesting that we will need splines for these variables. We will use rounded estimated degrees of freedom to apply these natural splines and add them to the final GAM + LASSO model. 
 
 ```{r} 
 # Update GAM Based On Summaries and Plot + Check for the edf values
@@ -330,7 +330,7 @@ housing %>%
   theme_classic()
 ```
 
-While we cannot interpret our coefficients with natural splines, we can examine their relationships with the outcome, median home values. For the first graph, `rm` vs. `medv`, we see a positive slope for dwellings with an average of 4 - 6.5 rooms. Once the average number of rooms per dwelling exceeds 6.5, the median home values increase at a faster rate. The second graph, `dis` vs. `medv`, shows that census tracts that are closer to the five selected employment centers tend to have lower median home values until they reach a distance of 3 units. After this point, the weighted distance to the employment centers has almost no effect. The final graph, `lstat` vs. `medv`, shows a significant negative relationship between the percentage of the lower status population and median home values that eventually flattens out as the percentage of the lower status population increases. 
+While we cannot interpret our coefficients with natural splines, we can examine their relationships with the outcome, median home values. For the first graph, `rm` vs. `medv`, we see a positive slope for dwellings with an average of 4 to 6.5 rooms. Once the average number of rooms per dwelling exceeds 6.5, the median home values increase at a faster rate. The second graph, `dis` vs. `medv`, shows that census tracts that are closer to the five selected employment centers tend to have lower median home values until they reach a distance of 3 units. After this point, the weighted distance to the employment centers has almost no effect. The final graph, `lstat` vs. `medv`, shows a significant negative relationship between the percentage of the lower status population and median home values that eventually flattens out as the percentage of the lower status population increases. 
 
 ### Conclusion
 
@@ -345,7 +345,7 @@ housing_classification <- housing %>%
  select(-medv)
 ```
 
-We will run a logistic LASSO and random forest to see which predictors are most useful when predicting whether or not a census tract is above or below the top 75% of Boston median home values. We created a classification data set with our new outcome variable, `Top75`, and we removed the `medv` variable as it would be taken into consideration when implementing our LASSO.  
+Now, I will run a logistic LASSO and random forest to see which predictors are most useful when predicting whether or not a census tract is above or below the top 75% of Boston median home values. I created a classification data set with our new outcome variable, `Top75`, and we removed the `medv` variable as it would be taken into consideration when implementing our LASSO.  
 
 ### Logistic LASSO Creation
 
@@ -389,7 +389,7 @@ tune_output <- tune_grid(
 autoplot(tune_output) + theme_classic()
 ```
 
-To begin our logistic LASSO model, we must first tune our penalty term, $\lambda$. The visualization shows the value of the penalty term along the x-axis and the cross-validated accuracy and ROC_auc values on the y-axis. 
+To begin the logistic LASSO model, we must first tune our penalty term, $\lambda$. The visualization shows the value of the penalty term along the x-axis and the cross-validated accuracy and ROC_auc values on the y-axis. 
 
 ```{r}
 # Select Penalty
@@ -407,7 +407,7 @@ tune_output %>%
     filter(penalty == best_se_penalty %>% pull(penalty))
 ```
 
-After running our LASSO using a $\lambda$ value within one standard error of the highest cross-validated roc_auc, we have two variables remaining: `rm`, the average number of rooms per dwelling, and `lstat`, the percentage of the lower status of the population. We have a 92.789% test AUC value using these two predictors, which is promising. 
+After running the LASSO using a $\lambda$ value within one standard error of the highest cross-validated roc_auc, we have two variables remaining: `rm`, the average number of rooms per dwelling, and `lstat`, the percentage of the lower status of the population. This penalty value yields a 92.789% test AUC value using these two predictors, which is promising. 
 
 ```{r}
 # Soft Predictions on Training Data
@@ -435,7 +435,7 @@ final_output %>%
 
 ```
 
-Our confusion matrix shows us that our logistic LASSO model correctly predicts 366 census tracts and incorrectly predicts 16 (false positives) of the census tracts that are not in the top 75% of Boston median home values. Furthermore, our model correctly predicts 94 census tracts and incorrectly predicts 30 census tracts (false negatives) of the census tracts in the top 75% of Boston median home values. So, of all the census tracts that are truly below the top 75% of Boston median home values, we correctly predicted 95.812% (specificity) of them. Moreover, of all the census tracts that are truly at or above the top 75% of Boston median home values, we correctly predicted 75.806% (sensitivity) of them. In the data context, we would expect to have a higher specificity than sensitivity as, inherently, there are more houses below the top 75% of Boston median home values than above, meaning that we are more likely to predict a house as below the top 75% rather than at or above this mark. 
+The confusion matrix shows us that our logistic LASSO model correctly predicts 366 census tracts and incorrectly predicts 16 (false positives) of the census tracts that are not in the top 75% of Boston median home values. Furthermore, the model correctly predicts 94 census tracts and incorrectly predicts 30 census tracts (false negatives) of the census tracts in the top 75% of Boston median home values. So, of all the census tracts that are truly below the top 75% of Boston median home values, the model correctly predicted 95.812% (specificity) of them. Moreover, of all the census tracts that are truly at or above the top 75% of Boston median home values, the model correctly predicts 75.806% (sensitivity) of them. In the data context, we expect to have a higher specificity than sensitivity as, inherently, there are more houses below the top 75% of Boston median home values than above, meaning that we are more likely to predict a house as below the top 75% rather than at or above this mark. 
 
 ### Random Forest Creation
 
@@ -516,7 +516,7 @@ data_rf_OOB_output %>%
   theme_classic()
 ```
 
-After creating creating all 4 random forest models, we have the accuracy estimates for each model. The random forest with 2 randomly sampled variables has the highest accuracy at 94.269%. The random forest models with 4 and 7 randomly sampled variables have an accuracy of 93.874%, and the model with 13 randomly sampled variables has the lowest accuracy at 92.885%.
+After creating creating all 4 random forest models, the random forest with 2 randomly sampled variables has the highest accuracy at 94.269%. The random forest models with 4 and 7 randomly sampled variables have an accuracy of 93.874%, and the model with 13 randomly sampled variables has the lowest accuracy at 92.885%.
 
 ```{r}
 rf_OOB_output(data_fit_mtry2,'mtry2', housing_classification %>% pull(Top75)) %>%
@@ -529,7 +529,7 @@ rf_OOB_output(data_fit_mtry2,'mtry2', housing_classification %>% pull(Top75)) %>
 373/(373+9)
 ```
 
-Our confusion matrix shows us that our random forest with two randomly sampled variables correctly predicts 373 census tracts and incorrectly predicts 9 (false positives) of the census tracts that are not in the top 75% of Boston median home values. Furthermore, our random forest correctly predicts 104 census tracts and incorrectly predicts 20 census tracts (false negatives) of the census tracts in the top 75% of Boston median home values. So, of all the census tracts that are truly below the top 75% of Boston median home values, we correctly predicted 97.644% (specificity) of them. Moreover, of all the census tracts that are truly at or above the top 75% of Boston median home values, we correctly predicted 83.871% (sensitivity) of them.
+The confusion matrix shows us that our random forest with two randomly sampled variables correctly predicts 373 census tracts and incorrectly predicts 9 (false positives) of the census tracts that are not in the top 75% of Boston median home values. Furthermore, our random forest correctly predicts 104 census tracts and incorrectly predicts 20 census tracts (false negatives) of the census tracts in the top 75% of Boston median home values. So, of all the census tracts that are truly below the top 75% of Boston median home values, we correctly predicted 97.644% (specificity) of them. Moreover, of all the census tracts that are truly at or above the top 75% of Boston median home values, we correctly predicted 83.871% (sensitivity) of them.
 
 ## Classification: Results + Conclusions
 
@@ -543,7 +543,7 @@ data.frame(
   Overall_Accuracy = c(0.909,0.942))
 ```
 
-When reviewing the confusion matrices for both the Logistic LASSO and random forest models, we found that our random forest model with two randomly sampled variables produces the highest sensitivity (83.8%), specificity (97.6%), and overall accuracy (94.2%). This means that our random forest model more correctly classifies census tracts above/at and below the top 75% of Boston median home values than the Logistic LASSO model.
+When reviewing the confusion matrices for both the Logistic LASSO and random forest models, I found that our random forest model with two randomly sampled variables produces the highest sensitivity (83.8%), specificity (97.6%), and overall accuracy (94.2%). This means that the random forest model more correctly classifies census tracts above/at and below the top 75% of Boston median home values than the Logistic LASSO model.
 
 ### Variable Importance
 
@@ -556,7 +556,7 @@ data_fit_mtry2 %>%
     theme_classic()
 ```
 
-When looking at the variable importance we utilize two approaches: impurity and permutation. Our first graph shows the variable importance of the random forest model looking at the “total decrease in node impurities (as measured by the Gini index) from splitting on the variable, averaged over all trees” (Greenwell and Boehmke 2020). Using this approach, we find that `rm`, the average number of rooms per dwelling, and `lstat`, the percentage of lower status population, are considered the most important variables when classifying census tracts as either below or at/above the top 75% of Boston median home values. These predictors were also considered the most significant for our Logistic LASSO model. After two predictors, we see a large drop in importance for remaining variables. 
+When looking at the variable importance I utilized two approaches: impurity and permutation. The first graph shows the variable importance of the random forest model looking at the “total decrease in node impurities (as measured by the Gini index) from splitting on the variable, averaged over all trees” (Greenwell and Boehmke 2020). Using this approach, I found that `rm`, the average number of rooms per dwelling, and `lstat`, the percentage of lower status population, are considered the most important variables when classifying census tracts as either below or at/above the top 75% of Boston median home values. These predictors were also considered the most significant for our Logistic LASSO model. After two predictors, we see a large drop in importance for remaining variables. 
 
 ```{r}
 # Based on permutation
@@ -569,28 +569,28 @@ data_wf_mtry2 %>%
     theme_classic()
 ```
 
-Our second graph shows a permutation approach to variable importance. We consider a variable important if it has a positive effect on the prediction performance. We find that `rm` and `lstat` are still considered to be the most important variables. Additionally, there is still a significant drop-off in variable importance between `lstat` and the next most important variable `indus`, the proportion of non-retail business acres per town. Both the impurity and permutation variable importance graphs show that `chas`, whether or not the census tract bounds the Charles River, has the least effect when classifying census tracts as either below or at/above the top 75% of Boston median home values.
+The second graph shows a permutation approach to variable importance. We consider a variable important if it has a positive effect on the prediction performance. I found that `rm` and `lstat` are still considered to be the most important variables. Additionally, there is still a significant drop-off in variable importance between `lstat` and the next most important variable `indus`, the proportion of non-retail business acres per town. Both the impurity and permutation variable importance graphs show that `chas`, whether or not the census tract bounds the Charles River, has the least effect when classifying census tracts as either below or at/above the top 75% of Boston median home values.
 
 ### Conclusion
 
-Both our random forest model and our logistic LASSO model show that `rm` and `lstat` have the largest effect when determining if a census tract is below or at/above the top 75% of Boston median home values. Using our logistic LASSO Model, we found that that the estimated odds of a census tract being at/above the top 75% of Boston median home values is higher when the average number of rooms per dwelling is higher. Additionally, we found that the estimated odds of a census tract being at/above the top 75% of Boston median home values is lower when the percentage of lower status of the population of a census tract increases (which is consistent with our findings from the regression analysis). It is important to note that our random forest model found that `indus` was the third most important variable. While it was not included into the final model, the Boston area has struggled with industrial-caused pollution. Up until recently, Boston has had many problems with companies dropping PCBs into rivers, specifically the Neponset River in the South Boston area (Chanatry 2022). Exposure to PCBs might cause thyroid hormone toxicity in humans (“Polychlorinated Biphenyls (PCBS) Toxicity” 2014) which is why census tracts that have a smaller proportion of industrial acres might be classified as at/above 75% of Boston median home values more often.  
+Both the random forest model and the logistic LASSO model show that `rm` and `lstat` have the largest effect when determining if a census tract is below or at/above the top 75% of Boston median home values. Using the logistic LASSO Model, I found that that the estimated odds of a census tract being at/above the top 75% of Boston median home values is higher when the average number of rooms per dwelling is higher. Additionally, I found that the estimated odds of a census tract being at/above the top 75% of Boston median home values is lower when the percentage of lower status of the population of a census tract increases (which is consistent with our findings from the regression analysis). It is important to note that our random forest model found that `indus` was the third most important variable. While it was not included into the final model, the Boston area has struggled with industrial-caused pollution. Up until recently, Boston has had many problems with companies dropping PCBs into rivers, specifically the Neponset River in the South Boston area (Chanatry 2022). Exposure to PCBs might cause thyroid hormone toxicity in humans (“Polychlorinated Biphenyls (PCBS) Toxicity” 2014) which is why census tracts that have a smaller proportion of industrial acres might be classified as at/above 75% of Boston median home values more often.  
 
 ## Unsupervised Learning: Clustering 
 
 ### Clustering Model & Feature Selection
 
-As identified earlier in the GAM + LASSO model the crime of a census tract, the pupil-teacher ratio, and the proportion of the lower status population living in a census tract have the most significant effect on the median value of homes. We would like to see if K-means clustering can identify any groups of districts which are similar and how many of those groups we may identify. In our research of finding more general clusters of districts we might want to favor parsimony - favor a fewer number of clusters.
+As identified earlier in the GAM + LASSO model the crime of a census tract, the pupil-teacher ratio, and the proportion of the lower status population living in a census tract have the most significant effect on the median value of homes. I would like to see if k-means clustering can identify any groups of census tracts which are similar and how many of those groups we may identify.
 
-To start, we select the variables of interest and make sure that only numeric variables are included.
+To start, I selected the variables of interest and make sure that only numeric variables are included.
 
 ```{r}
 numeric_housing <- housing %>%
   select(crim,lstat,ptratio)
 ```
 
-### K-value Choice 
+### Choosing K
 
-As we choose the k number of clusters, we want to stop at a number where we no longer see meaningful decreases in heterogeneity by increasing k. After k=4 the decreases seem to be much smaller than at lesser k values.
+As choosing the k number of clusters, we want to stop at a number where we no longer see meaningful decreases in heterogeneity by increasing k. After k=4 the decreases seem to be much smaller than at lesser k values.
 
 ```{r}
 # Choose K (Elbow Method)
@@ -615,10 +615,28 @@ numeric_housing <- numeric_housing %>%
 
 ### Visualization
 
-We assign values of clusters to every district and create a 3-d plot, where color represents a cluster, and x,y,z coordinate represent the values of interest (crim,ptratio,lstat).
+We assign values of clusters to every district and create a 3-d plot, where color represents a cluster, and x,y,z coordinate represent the values of interest (crim, ptratio, lstat).
 
 ```{r}
-plot_ly(x = numeric_housing$crim, y = numeric_housing$ptratio, z = numeric_housing$lstat, type = "scatter3d", mode = "markers", color = numeric_housing$kclust_labels,scale=TRUE)
+plot_ly(x = numeric_housing$crim, 
+        y = numeric_housing$ptratio, 
+        z = numeric_housing$lstat, 
+        type = "scatter3d", mode = "markers", color = numeric_housing$kclust_labels,scale=TRUE) %>% 
+   plotly::layout(scene = list(
+         xaxis = list(title = 'Per Capita Crime Rate by Town',
+                      zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         yaxis = list(title = 'Pupil-Teacher Ratio by Town',
+                      zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         zaxis = list(title = '% of Lower Status of the Population',
+                      zerolinecolor = '#ffff',
+                      zerolinewidth = 2,
+                      gridcolor = 'ffff'),
+         plot_bgcolor='#e5ecf6'))
+
 ```
 
 ### Conclusion

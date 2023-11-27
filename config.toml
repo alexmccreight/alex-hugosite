@@ -30,10 +30,10 @@ enableEmoji = true
 [params]
   orgName = "Alex McCreight"
   orgLocal = ""
-  description = "Master's Researcher"
+  description = "Research Assistant"
   favicon = "/img/a.jpg" #Icon at top of the browser
   logo = "/img/a.jpg" #Main b logo to change
-  mainSections = ["blog","project"] #sections featured on the about me
+  mainSections = ["research","project"] #sections featured on the about me
   navallcaps = true
   # show/hide social icons in site header & footer
   # configure social icons and links below in [[params.social]]
@@ -105,6 +105,11 @@ enableEmoji = true
   series = "series"
   tag = "tags"
 
+# Permalinks
+[permalinks]
+  publications = "/publications/:filename/"
+  research = "/publications/:filename/"
+
 [menu]
   # Configure header 
   [[menu.header]]
@@ -115,7 +120,7 @@ enableEmoji = true
   [[menu.header]]
     name = "Research"
     title = "Research"
-    url = "/blog/"
+    url = "/research/"
     weight = 2
   [[menu.header]]
     name = "Projects"
@@ -123,9 +128,9 @@ enableEmoji = true
     url = "/project/"
     weight = 3
   [[menu.header]]
-    name = "Presentations"
-    title = "Presentations"
-    url = "/talk/"
+    name = "Publications"
+    title = "Publications"
+    url = "/publications/"
     weight = 4
     
   # Configure footer  
