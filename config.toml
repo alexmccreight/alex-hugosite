@@ -33,7 +33,7 @@ enableEmoji = true
   description = "Research Assistant"
   favicon = "/img/a.jpg" #Icon at top of the browser
   logo = "/img/a.jpg" #Main b logo to change
-  mainSections = ["research","project"] #sections featured on the about me
+  mainSections = ["research","projects"] #sections featured on the about me
   navallcaps = true
   # show/hide social icons in site header & footer
   # configure social icons and links below in [[params.social]]
@@ -108,7 +108,8 @@ enableEmoji = true
 # Permalinks
 [permalinks]
   publications = "/publications/:filename/"
-  research = "/publications/:filename/"
+  research = "/reserach/:filename/"
+  projects = "/projects/:filename/"
 
 [menu]
   # Configure header 
@@ -125,7 +126,7 @@ enableEmoji = true
   [[menu.header]]
     name = "Projects"
     title = "Project Portfolio"
-    url = "/project/"
+    url = "/projects/"
     weight = 3
   [[menu.header]]
     name = "Publications"
