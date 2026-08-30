@@ -1,0 +1,21 @@
+# Old Hugo/blogdown site (2022–2024). Everything collapses onto the single page.
+# Netlify serves real files first, so style.css and photo.jpg are unaffected.
+
+/about/*         /  301
+/research/*      /  301
+/reserach/*      /  301
+/projects/*      /  301
+/project/*       /  301
+/publications/*  /  301
+/blog/*          /  301
+/collection/*    /  301
+/contributors/*  /  301
+/elements/*      /  301
+/license/*       /  301
+/series/*        /  301
+/tags/*          /  301
+/form/*          /  301
+/contact/*       /  301
+
+# Catch-all for any deep post URL not listed above.
+/*               /  301

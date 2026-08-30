@@ -1,17 +1,6 @@
 [build]
-command = 'hugo'
-publish = 'public'
-[build.environment]
-HUGO_VERSION = '0.101.0'
-
-
-[context]
-[context.branch-deploy]
-command = 'hugo -F -b $DEPLOY_PRIME_URL'
-
-[context.deploy-preview]
-command = 'hugo -F -b $DEPLOY_PRIME_URL'
-
-[context.production]
-[context.production.environment]
-HUGO_ENV = 'production'
+# Static files only. The explicit no-op command is deliberate: without it,
+# Netlify falls back to whatever build command is set in the site UI, which
+# for this site was 'hugo' and would now fail.
+command = "echo 'No build step. Serving static files from site/.'"
+publish = 'site'
